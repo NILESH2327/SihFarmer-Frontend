@@ -1,7 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { postJSON } from "../api";
 
 const Login = () => {
+    const [form, setForm] = useState({email: "", password: "" });
+      const handleChange = (e) =>
+          setForm({ ...form, [e.target.name]: e.target.value });
+
+    const handleSubmit = async (e)=>{
+      e.preventDefault();
+      console.log(form);
+      const res = await postJSON('/auth/login', form );
+      if(res.status===400){
+        alert(res.message);
+      }
+      console.log(res.data)
+      alert('Login Succesful');
+    }
+
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-green-50 px-4">
       <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-green-100">
@@ -10,13 +27,14 @@ const Login = () => {
           Login
         </h2>
 
-        <form className="space-y-5">
+        <form className="space-y-5" onChange={handleChange} onSubmit={handleSubmit}>
           <div>
             <label className="block text-gray-700 mb-1">Email</label>
             <input
               type="email"
               className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-green-400 outline-none"
               placeholder="Enter your email"
+              name="email"
             />
           </div>
 
@@ -24,6 +42,7 @@ const Login = () => {
             <label className="block text-gray-700 mb-1">Password</label>
             <input
               type="password"
+              name="password"
               className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-green-400 outline-none"
               placeholder="Enter your password"
             />
