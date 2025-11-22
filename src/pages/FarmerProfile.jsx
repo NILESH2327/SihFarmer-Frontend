@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
+import { getJSON, postJSON } from "../api";
 
 // FarmerProfile Component (Krishi Sakhi)
 // - Farmer & farm profiling fields (name, location, crop, land size, soil, irrigation, photo)
@@ -32,58 +33,33 @@ export default function FarmerProfile() {
     profileImage: null,
   };
 
-  const [profile, setProfile] = useState(() => {
-    try {
-      const raw = localStorage.getItem("ks_profile");
-      return raw ? JSON.parse(raw) : defaultProfile;
-    } catch (e) {
-      return defaultProfile;
-    }
-  });
-
-  const [activities, setActivities] = useState(() => {
-    try {
-      const raw = localStorage.getItem("ks_activities");
-      return raw ? JSON.parse(raw) : [];
-    } catch (e) {
-      return [];
-    }
-  });
-
-  const activityRef = useRef();
-  const recognitionRef = useRef(null);
-
+  const [profile, setProfile] = useState(defaultProfile);
+  const [activities, setActivities] = useState([]);
   // Load profile from server on mount (if available)
   useEffect(() => {
     (async () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) return;
-
-        const res = await fetch("http://localhost:5000/api/farmer/profile", {
-          headers: { "auth-token": token },
-        });
-
-        if (!res.ok) return;
-
-        const data = await res.json();
-        if (data.success && data.profile) {
-          setProfile((p) => ({ ...p, ...data.profile }));
-        }
+        const res = await getJSON(`/farmer/profile`, token);
+        
+        setProfile({ ...res });   
+        
+        const Activityres = await getJSON(`/activity/list`, token);
+        console.log("Fetched profile:", Activityres);
+        setActivities(Activityres||[]); 
       } catch (err) {
         console.log("Server not available, using local profile");
       }
     })();
   }, []);
+  
 
-  useEffect(() => {
-    try {
-      localStorage.setItem("ks_profile", JSON.stringify(profile));
-      localStorage.setItem("ks_activities", JSON.stringify(activities));
-    } catch (e) {
-      // ignore
-    }
-  }, [profile, activities]);
+  const activityRef = useRef();
+  const recognitionRef = useRef(null);
+
+
+
 
   const handleImageUpload = (file) => {
     if (!file) return;
@@ -99,18 +75,9 @@ export default function FarmerProfile() {
     }
 
     setLoading(true);
-
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/farmer/profile", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "auth-token": token,
-        },
-        body: JSON.stringify(profile),
-      });
-
+      const id = await localStorage.getItem("userId");
+      const res = await postJSON(`/farmer/${id}`, profile, id);
       const data = await res.json();
       if (data.success) {
         toast.success("Profile saved");
@@ -121,7 +88,6 @@ export default function FarmerProfile() {
     } catch (err) {
       toast.warn("Unable to reach server — saved locally");
     }
-
     setLoading(false);
   };
 
@@ -131,26 +97,17 @@ export default function FarmerProfile() {
       return;
     }
 
-    const newAct = {
-      id: Date.now(),
+    const newAct = {  
       type,
-      note,
-      timestamp: new Date().toISOString(),
-      synced: false,
+      note,   
     };
 
     setActivities((prev) => [newAct, ...prev]);
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/farmer/activity", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "auth-token": token,
-        },
-        body: JSON.stringify(newAct),
-      });
+      const res = await postJSON("/activity/add", newAct, token);
+      console.log("Activity sync response:", res);
 
       if (res.ok) {
         setActivities((prev) => prev.map((a) => (a.id === newAct.id ? { ...a, synced: true } : a)));

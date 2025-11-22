@@ -5,9 +5,10 @@ import {
   FileImage,
   CheckCircle,
   AlertCircle,
-  Loader
+  Loader,
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { postJSON } from '../api';
 
 const Upload = () => {
   const { t } = useLanguage();
@@ -16,10 +17,21 @@ const Upload = () => {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
-
   const fileInputRef = useRef(null);
 
-  const handleFileSelect = (file) => {
+  // Convert file to Base64 without prefix
+  const fileToBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const base64 = reader.result.split(',')[1];
+        resolve(base64);
+      };
+      reader.onerror = (error) => reject(error);
+    });
+
+  const handleFileSelect = async (file) => {
     setSelectedFile(file);
     setAnalysisResult(null);
 
@@ -32,58 +44,89 @@ const Upload = () => {
 
   const handleDrop = (e) => {
     e.preventDefault();
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      handleFileSelect(files[0]);
+    if (e.dataTransfer.files.length > 0) {
+      handleFileSelect(e.dataTransfer.files[0]);
     }
   };
 
   const handleFileInputChange = (e) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      handleFileSelect(files[0]);
+    if (e.target.files.length > 0) {
+      handleFileSelect(e.target.files[0]);
     }
   };
 
+  // const analyzeImage = async () => {
+  //   if (!selectedFile) return;
+
+  //   setIsAnalyzing(true);
+  //   setAnalysisResult(null);
+
+  //   try {
+  //     const base64Image = await fileToBase64(selectedFile);
+  //     const response = await postJSON('/advisory/detect-crop-disease', {
+  //       base64Image,
+  //       mimeType: selectedFile.type,
+  //     });
+
+  //     console.log('Analysis response:', response);
+  //     setAnalysisResult(response)
+   
+  //     const data = response;
+  //     // if(data){
+  //     //   try {
+  //     //     // Assuming the backend returns a JSON string or object with disease info
+  //     //     const parsed = typeof data.result === 'string' ? JSON.parse(data.result) : data.result;
+  //     //     setAnalysisResult(parsed);
+  //     //   } catch {
+  //     //     setAnalysisResult({ disease: data.result });
+  //     //   }
+  //     // } else {
+  //     //   setAnalysisResult({ disease: data.error || 'Unable to analyze image' });
+  //     // }
+  //   } catch (error) {
+  //     setAnalysisResult({ disease: 'Network error: ' + error.message });
+  //   } finally {
+  //     setIsAnalyzing(false);
+  //   }
+  // };
+
   const analyzeImage = async () => {
-    if (!selectedFile) return;
+  if (!selectedFile) return;
 
-    setIsAnalyzing(true);
+  setIsAnalyzing(true);
+  setAnalysisResult(null);
 
-    // Simulated AI result
-    setTimeout(() => {
-      setAnalysisResult({
-        disease: 'Leaf Blight',
-        confidence: 87,
-        severity: 'Moderate',
-        treatment: [
-          'Remove affected leaves immediately',
-          'Apply copper-based fungicide',
-          'Improve air circulation around plants',
-          'Reduce watering frequency',
-        ],
-        prevention: [
-          'Avoid overhead watering',
-          'Maintain proper plant spacing',
-          'Apply preventive fungicide spray',
-        ],
-      });
+  try {
+    const formData = new FormData();
+    formData.append('image', selectedFile); // 'image' is the key your backend expects
 
-      setIsAnalyzing(false);
-    }, 3000);
-  };
+    // Use fetch or axios with multipart/form-data
+    const response = await fetch('http://localhost:5000/api/advisory/detect-crop-disease', {
+      method: 'POST',
+      body: formData,      
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const result = await response.json();
+    setAnalysisResult(result);
+  } catch (error) {
+    setAnalysisResult({ disease: 'Network error: ' + error.message });
+  } finally {
+    setIsAnalyzing(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">{t('uploadTitle')}</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">{t('uploadSubtitle')}</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
           {/* Upload Section */}
           <div className="bg-white rounded-xl shadow-lg p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Upload Image</h2>
@@ -101,9 +144,7 @@ const Upload = () => {
                   Drop your image here or click to browse
                 </p>
 
-                <p className="text-sm text-gray-500 mb-4">
-                  Supports JPG, PNG, WEBP up to 10MB
-                </p>
+                <p className="text-sm text-gray-500 mb-4">Supports JPG, PNG, WEBP up to 10MB</p>
 
                 <div className="flex justify-center space-x-4">
                   <button className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
@@ -120,11 +161,7 @@ const Upload = () => {
             ) : (
               <div className="space-y-4">
                 <div className="relative">
-                  <img
-                    src={previewUrl}
-                    alt="Uploaded crop"
-                    className="w-full h-64 object-cover rounded-lg"
-                  />
+                  <img src={previewUrl} alt="Uploaded crop" className="w-full h-64 object-cover rounded-lg" />
 
                   <button
                     onClick={() => {
@@ -197,7 +234,6 @@ const Upload = () => {
 
             {analysisResult && (
               <div className="space-y-6">
-                
                 {/* Disease Section */}
                 <div className="border border-orange-200 rounded-lg p-4 bg-orange-50">
                   <div className="flex items-center space-x-2 mb-2">
@@ -208,7 +244,8 @@ const Upload = () => {
                     {analysisResult.disease}
                   </p>
                   <p className="text-sm text-orange-700">
-                    Confidence: {analysisResult.confidence}% | Severity: {analysisResult.severity}
+                    Confidence: {analysisResult.confidence}%
+                    {' '}| Severity: {analysisResult.severity}
                   </p>
                 </div>
 
@@ -218,12 +255,11 @@ const Upload = () => {
                     <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
                     Treatment Recommendations
                   </h3>
-
                   <ul className="space-y-2">
-                    {analysisResult.treatment.map((step, index) => (
-                      <li key={index} className="flex items-start space-x-2">
+                    {analysisResult.treatment?.map((step, idx) => (
+                      <li key={idx} className="flex items-start space-x-2">
                         <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full mt-0.5">
-                          {index + 1}
+                          {idx + 1}
                         </span>
                         <span className="text-gray-700 text-sm">{step}</span>
                       </li>
@@ -234,20 +270,17 @@ const Upload = () => {
                 {/* Prevention */}
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-3">Prevention Tips</h3>
-
                   <ul className="space-y-2">
-                    {analysisResult.prevention.map((tip, index) => (
-                      <li key={index} className="flex items-start space-x-2">
+                    {analysisResult.prevention?.map((tip, idx) => (
+                      <li key={idx} className="flex items-start space-x-2">
                         <span className="w-2 h-2 bg-blue-400 rounded-full mt-2"></span>
                         <span className="text-gray-700 text-sm">{tip}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
-
               </div>
             )}
-
           </div>
         </div>
       </div>

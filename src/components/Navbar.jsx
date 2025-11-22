@@ -2,18 +2,26 @@ import React, { use, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Sprout, Menu, X, Globe } from "lucide-react";
 import { useLanguage } from "../contexts/LanguageContext";
+import { logout } from "../lib/actions/authActions";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const navigator = window.navigator; 
   const location = useLocation();
   const { language, setLanguage, t } = useLanguage();
   const [isLogged, setIsLogged] = useState(false);
 
-  useEffect(() => {
-    
+  useEffect(() => {    
     const token = localStorage.getItem("token");
     setIsLogged(!!token);
   }, []);
+
+  const handleLogout = () => {
+    logout();
+    setIsLogged(false);
+    //take me back to home page
+    window.location.href = "/";  
+  }
 
 
   const navItems = [
@@ -53,6 +61,20 @@ const Navbar = () => {
                 {item.label}
               </Link>
             ))}
+            {
+              isLogged && (
+                <Link
+                key="/profile"
+                to="/farmer-profile"
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive("/farmer-profile")
+                  ? "bg-green-100 text-green-700"
+                  : "text-gray-600 hover:text-green-600 hover:bg-green-50"
+                  }`}
+              >
+                {t("Profile")}
+              </Link>
+              )
+            }
           </div>
 
           {/* Language Toggle & Auth Buttons */}
@@ -65,15 +87,15 @@ const Navbar = () => {
               <span>{language === "en" ? "മലയാളം" : "English"}</span>
             </button>
             {isLogged ?
-              <button className="px-4 py-2 text-green-600 hover:text-green-700 font-medium transition-colors">
-                {t("Profile")}
+              <button onClick={handleLogout} className="px-4 py-2 text-green-600 hover:text-green-700 font-medium transition-colors">
+                {t("Logout")}
               </button> : <>
-                <button className="px-4 py-2 text-green-600 hover:text-green-700 font-medium transition-colors">
+                <Link to={'/login'}  className="px-4 py-2 text-green-600 hover:text-green-700 font-medium transition-colors">
                   {t("login")}
-                </button>
-                <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
+                </Link>
+                {/* <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
                   {t("getStarted")}
-                </button>
+                </button> */}
               </>}
           </div>
 
