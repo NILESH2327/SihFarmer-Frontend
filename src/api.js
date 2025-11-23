@@ -5,8 +5,9 @@ const API_BASE = import.meta.env.VITE_API_BASE
   : "http://localhost:5000/api";
 
 // POST JSON
-export async function postJSON(path, body, token) {
+export async function postJSON(path, body) {
   try {
+    const token = await localStorage.getItem('token');
     const res = await axios.post(
       `${API_BASE}${path}`,
       body,

@@ -2,8 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { Cloud, Thermometer, Droplets, Wind, TrendingUp, TrendingDown, Award, FileText } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getweekday } from '../lib/actions/weather';
+import AddCropForm from '../components/AddCrop';
+import { useNavigate } from 'react-router-dom';
+import { isAuthenticated } from '../lib/actions/authActions';
+import { toast } from 'react-toastify';
 
 const Dashboard = () => {
+    const navigate = useNavigate();
+    useEffect(() => {
+      console.log(isAuthenticated());
+      if(!isAuthenticated()){
+        toast.error("Please login First");
+        navigate('/login')
+      }   
+    }, [])
   const { t } = useLanguage();
   const [Weather, setWeather] = useState();
 
@@ -45,7 +57,7 @@ const Dashboard = () => {
       }
     };
 
-    getWeatherData("Jhansi").then(data => setWeather(data));
+    getWeatherData("Kochi").then(data => setWeather(data));
   }, []);
 
   const marketPrices = [
@@ -243,6 +255,18 @@ const Dashboard = () => {
           </div>
 
         </div>
+        <div className="mb-8">
+          <h1>Select the crop to be sown</h1>
+          <form>
+            <select name="crop" id="crop" defaultValue={"Selcet Crop"}>
+              <option value="paddy">Paddy</option>              
+            </select>
+            <button type='submit'>Submit
+            </button>
+            
+          </form>
+        </div>
+         <AddCropForm/>
       </div>
     </div>
   );

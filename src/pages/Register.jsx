@@ -85,11 +85,21 @@
 
 
 import React, { useState } from "react";
+import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { isAuthenticated } from "../lib/actions/authActions";
 
 const Register = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log(isAuthenticated());
+    if (isAuthenticated()) {
+      toast.error("Already Registered");
+      navigate('/dashboard')
+    }
+  }, [])
 
   // State for form fields
   const [name, setName] = useState("");

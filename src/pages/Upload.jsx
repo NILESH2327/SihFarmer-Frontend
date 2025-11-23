@@ -9,8 +9,21 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { postJSON } from '../api';
+import { isAuthenticated } from '../lib/actions/authActions';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 const Upload = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    console.log(isAuthenticated());
+    if(!isAuthenticated()){
+      toast.error("Please login First");
+      navigate('/login')
+    }   
+  }, [])
+  
   const { t } = useLanguage();
 
   const [selectedFile, setSelectedFile] = useState(null);

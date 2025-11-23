@@ -2,8 +2,20 @@ import React, { useState, useRef, useEffect } from "react";
 import { Send, Bot, User, Mic, MicOff, Volume2 } from "lucide-react";
 import { useLanguage } from "../contexts/LanguageContext";
 import { getBotResponse } from "../lib/actions/chatbot";
+import { useNavigate } from "react-router-dom";
+import { isAuthenticated } from "../lib/actions/authActions";
+import { toast } from "react-toastify";
 
 const Chatbot = () => {
+    const navigate = useNavigate();
+    useEffect(() => {
+      console.log(isAuthenticated());
+      if(!isAuthenticated()){
+        toast.error("Please login First");
+        navigate('/login')
+      }   
+    }, [])
+
   const { t, language } = useLanguage();
 
   // ---------------------------
