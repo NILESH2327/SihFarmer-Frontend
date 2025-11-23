@@ -3,6 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import { Sprout, Menu, X, Globe } from "lucide-react";
 import { useLanguage } from "../contexts/LanguageContext";
 
+
+
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const location = useLocation();
@@ -13,6 +15,7 @@ const Navbar = () => {
     { path: "/dashboard", label: t("dashboard") },
     { path: "/upload", label: t("upload") },
     { path: "/chatbot", label: t("chatbot") },
+    { path: "/knowledge", label: "Knowledge Engine" },
   ];
 
   const isActive = (path) => location.pathname === path;

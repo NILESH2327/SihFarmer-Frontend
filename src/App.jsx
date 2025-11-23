@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard';
 import Upload from './pages/Upload';
 import Chatbot from './pages/Chatbot';
 import { LanguageProvider } from './contexts/LanguageContext';
+import Knowledge from "./pages/Knowledge";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -28,6 +29,7 @@ function App() {
               <Route path="/chatbot" element={<Chatbot />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/knowledge" element={<Knowledge/>} />
 
     
             </Routes>
