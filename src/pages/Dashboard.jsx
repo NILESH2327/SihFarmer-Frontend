@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { isAuthenticated } from '../lib/actions/authActions';
 import { toast } from 'react-toastify';
 import PhoneAuth from '../components/PhoneAuth';
+import AddActivity from '../components/AddActivity';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -105,11 +106,12 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
+
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Farmer Dashboard</h1>
           <p className="text-gray-600">Your personalized farming insights and recommendations</p>
         </div>
-
+      <AddActivity/>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
           <div className="lg:col-span-2">

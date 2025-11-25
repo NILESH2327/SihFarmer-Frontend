@@ -68,7 +68,7 @@ const Upload = () => {
       formData.append("image", selectedFile);
 
       const response = await fetch(
-        "http://localhost:5000/api/advisory/detect-crop-disease",
+        `${import.meta.env.VITE_API_BASE}/advisory/detect-crop-disease`,
         {
           method: "POST",
           body: formData,

@@ -29,7 +29,8 @@ export async function postJSON(path, body) {
 }
 
 // GET JSON
-export async function getJSON(path, token) {
+export async function getJSON(path) {
+  const token = await localStorage.getItem('token');
   try {
     const res = await axios.get(
       `${API_BASE}${path}`,

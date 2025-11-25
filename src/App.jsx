@@ -10,7 +10,7 @@ import Register from "./pages/Register";
 import Dashboard from './pages/Dashboard';
 import Upload from './pages/Upload';
 import Chatbot from './pages/Chatbot';
-import Knowledge from "./pages/knowledge";
+import Knowledge from "./pages/Knowledge";
 import ActivityPage from './pages/ActivityPage';
 import FarmerProfile from './pages/FarmerProfile';
 import UpdateProfileForm from './pages/UpdateProfile';
@@ -25,6 +25,7 @@ import VerifyOtp from './pages/VerifyOtp';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { isAuthenticated } from './lib/actions/authActions';
 import FloatingChatbot from './components/FloatingChatbot';
+import ActivityDashboard from './pages/ActivityDashboard';
 
 function App() {
   const [isLogged, setIsLogged] = useState(false);
@@ -64,6 +65,7 @@ function App() {
                 <Route path="/plot/:id" element={<PlotDetails />} />
                 <Route path="/add-plot" element={<AddPlot />} />
                 <Route path="/verify-otp" element={<VerifyOtp />} />
+                <Route path="/all-activities" element={<ActivityDashboard />} />
 
               </Routes>
             </main>

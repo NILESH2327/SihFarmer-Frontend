@@ -3,24 +3,27 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { onLogin } from "../lib/actions/authActions";  
 import GoogleAuth from "../components/GoogleAuth";
+import { postJSON } from "../api";
 
 const Login = () => {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
+  const [phone, setphone] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const data = await postJSON('/auth/login',{ phone, password } );
+      
+      // const res = await fetch("http://localhost:5000/api/auth/login", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({ phone, password }),
+      // });
 
-      const data = await res.json();
+     
 
       if (data.success) {
         
@@ -47,13 +50,13 @@ const Login = () => {
 
         <form className="space-y-5" onSubmit={handleLogin}>
           <div>
-            <label className="block text-gray-700 mb-1">Email</label>
+            <label className="block text-gray-700 mb-1">Phone</label>
             <input
-              type="email"
+              type="phone"
               className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-green-400 outline-none"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your phone"
+              value={phone}
+              onChange={(e) => setphone(e.target.value)}
               required
             />
           </div>

@@ -80,7 +80,7 @@ const VerifyOtp = () => {
   const resendOtp = async () => {
     setResending(true);
     try {
-      const res = await fetch("http://localhost:5000/api/auth/resend-otp", {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE}/auth/resend-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone }),
