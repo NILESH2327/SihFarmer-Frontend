@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import Navbar from './components/Navbar';
@@ -23,8 +23,18 @@ import PlotDetails from './pages/PlotDetails';
 import AddPlot from './pages/AddCrop';
 import VerifyOtp from './pages/VerifyOtp';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import { isAuthenticated } from './lib/actions/authActions';
 
 function App() {
+  const [isLogged, setIsLogged] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    console.log("this is the token ", token);
+    if(token !== null) setIsLogged(true);
+    else setIsLogged(false);   
+  }, [])
+  
 
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
@@ -35,7 +45,7 @@ function App() {
           <ToastContainer position="bottom-right" />
 
           <div className="min-h-screen bg-gray-50 flex flex-col">
-            <Navbar />
+            <Navbar isAuthenticated={isLogged} />
 
             <main className="flex-1">
               <Routes>

@@ -27,8 +27,7 @@ const Login = () => {
         onLogin({ id: data.farmerId, token: data.token });
 
         toast.success(data.message);
-
-        setTimeout(() => navigate("/dashboard"), 1000);
+        setTimeout(() => window.location.href = "/dashboard", 1000);
 
       } else {
         toast.error(data.message);

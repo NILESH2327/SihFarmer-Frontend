@@ -1,28 +1,18 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Sprout, Menu, X, Globe } from "lucide-react";
 import { useLanguage } from "../contexts/LanguageContext";
 import { logout } from "../lib/actions/authActions";
 
-const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const navigator = window.navigator; 
+const Navbar = ({ isAuthenticated }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const { language, setLanguage, t } = useLanguage();
-  const [isLogged, setIsLogged] = useState(false);
-
-  useEffect(() => {    
-    const token = localStorage.getItem("token");
-    setIsLogged(!!token);
-  }, []);
 
   const handleLogout = () => {
     logout();
-    setIsLogged(false);
-    //take me back to home page
-    window.location.href = "/";  
-  }
-
+    window.location.href = "/";
+  };
 
   const navItems = [
     { path: "/", label: t("home") },
@@ -54,31 +44,31 @@ const Navbar = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive(item.path)
-                  ? "bg-green-100 text-green-700"
-                  : "text-gray-600 hover:text-green-600 hover:bg-green-50"
-                  }`}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  isActive(item.path)
+                    ? "bg-green-100 text-green-700"
+                    : "text-gray-600 hover:text-green-600 hover:bg-green-50"
+                }`}
               >
                 {item.label}
               </Link>
             ))}
-            {
-              isLogged && (
-                <Link
+            {isAuthenticated && (
+              <Link
                 key="/profile"
                 to="/farmer-profile"
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive("/farmer-profile")
-                  ? "bg-green-100 text-green-700"
-                  : "text-gray-600 hover:text-green-600 hover:bg-green-50"
-                  }`}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  isActive("/farmer-profile")
+                    ? "bg-green-100 text-green-700"
+                    : "text-gray-600 hover:text-green-600 hover:bg-green-50"
+                }`}
               >
                 {t("Profile")}
               </Link>
-              )
-            }
+            )}
           </div>
 
-          {/* Language Toggle & Auth Buttons */}
+          {/* Language Toggle & Auth Buttons (Desktop) */}
           <div className="hidden md:flex items-center space-x-4">
             <button
               onClick={() => setLanguage(language === "en" ? "ml" : "en")}
@@ -87,17 +77,21 @@ const Navbar = () => {
               <Globe className="h-4 w-4" />
               <span>{language === "en" ? "മലയാളം" : "English"}</span>
             </button>
-            {isLogged ?
-              <button onClick={handleLogout} className="px-4 py-2 text-green-600 hover:text-green-700 font-medium transition-colors">
+            {isAuthenticated ? (
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 text-green-600 hover:text-green-700 font-medium transition-colors"
+              >
                 {t("Logout")}
-              </button> : <>
-                <Link to={'/login'}  className="px-4 py-2 text-green-600 hover:text-green-700 font-medium transition-colors">
-                  {t("login")}
-                </Link>
-                {/* <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
-                  {t("getStarted")}
-                </button> */}
-              </>}
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                className="px-4 py-2 text-green-600 hover:text-green-700 font-medium transition-colors"
+              >
+                {t("login")}
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -120,31 +114,61 @@ const Navbar = () => {
                   key={item.path}
                   to={item.path}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${isActive(item.path)
-                    ? "bg-green-100 text-green-700"
-                    : "text-gray-600 hover:text-green-600 hover:bg-green-50"
-                    }`}
+                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                    isActive(item.path)
+                      ? "bg-green-100 text-green-700"
+                      : "text-gray-600 hover:text-green-600 hover:bg-green-50"
+                  }`}
                 >
                   {item.label}
                 </Link>
               ))}
 
-              <div className="border-t border-gray-200 pt-4 mt-4">
+              {isAuthenticated && (
+                <Link
+                  key="/profile-mobile"
+                  to="/farmer-profile"
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                    isActive("/farmer-profile")
+                      ? "bg-green-100 text-green-700"
+                      : "text-gray-600 hover:text-green-600 hover:bg-green-50"
+                  }`}
+                >
+                  {t("Profile")}
+                </Link>
+              )}
+
+              <div className="border-t border-gray-200 pt-4 mt-4 flex flex-col gap-2">
                 <button
-                  onClick={() => setLanguage(language === "en" ? "ml" : "en")}
+                  onClick={() => {
+                    setLanguage(language === "en" ? "ml" : "en");
+                    setIsMenuOpen(false);
+                  }}
                   className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-green-600 hover:bg-green-50 transition-colors w-full"
                 >
                   <Globe className="h-5 w-5" />
                   <span>{language === "en" ? "മലയാളം" : "English"}</span>
                 </button>
-
-                <button className="w-full mt-2 px-3 py-2 text-green-600 hover:text-green-700 font-medium transition-colors text-left">
-                  {t("login")}
-                </button>
-
-                <button className="w-full mt-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
-                  {t("getStarted")}
-                </button>
+                {isAuthenticated ? (
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full mt-2 px-3 py-2 text-green-600 hover:text-green-700 font-medium transition-colors text-left"
+                  >
+                    {t("Logout")}
+                  </button>
+                ) : (
+                  <Link
+                    to="/login"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="w-full mt-2 px-3 py-2 text-green-600 hover:text-green-700 font-medium transition-colors text-left"
+                  >
+                    {t("login")}
+                  </Link>
+                )}
               </div>
             </div>
           </div>

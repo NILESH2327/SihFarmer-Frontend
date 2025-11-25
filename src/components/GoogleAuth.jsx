@@ -20,8 +20,8 @@ export default function GoogleAuth() {
             console.log("this is the token", token);
             localStorage.setItem("token", token);
             toast.success("Logged in Successfully");
-            navigate('/');
-            
+           window.location.href = "/dashboard";
+
         } catch (err) {
             console.error(err);
             alert("Google login failed");
