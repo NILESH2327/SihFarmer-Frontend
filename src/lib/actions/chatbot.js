@@ -28,5 +28,5 @@ export const getBotResponse = async (input) => {
 
     const res = await postJSON('/advisory/generate', {question: input });
     console.log("AI Response:", res);
-    return res.answer;
+    return res;
 };

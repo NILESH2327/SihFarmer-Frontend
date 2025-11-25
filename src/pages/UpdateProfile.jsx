@@ -189,9 +189,9 @@ export default function UpdateProfilePage() {
                 setProfile({ ...profile, language: e.target.value })
               }
             >
-              <option value="ml-IN">Malayalam</option>
-              <option value="en-IN">English</option>
-              <option value="hi-IN">Hindi</option>
+              <option value="ml">Malayalam</option>
+              <option value="en">English</option>
+              <option value="hi">Hindi</option>
             </select>
           </div>
         </div>

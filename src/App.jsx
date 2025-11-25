@@ -24,6 +24,7 @@ import AddPlot from './pages/AddCrop';
 import VerifyOtp from './pages/VerifyOtp';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { isAuthenticated } from './lib/actions/authActions';
+import FloatingChatbot from './components/FloatingChatbot';
 
 function App() {
   const [isLogged, setIsLogged] = useState(false);
@@ -69,8 +70,10 @@ function App() {
 
             <Footer />
           </div>
+        ̌<FloatingChatbot/>
         </Router>
-      </LanguageProvider>
+                </LanguageProvider>
+      
     </GoogleOAuthProvider>
   );
 }

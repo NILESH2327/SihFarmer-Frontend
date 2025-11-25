@@ -8,6 +8,7 @@ const API_BASE = import.meta.env.VITE_API_BASE
 export async function postJSON(path, body) {
   try {
     const token = await localStorage.getItem('token');
+    console.log("this is the token inside api js", body);
     const res = await axios.post(
       `${API_BASE}${path}`,
       body,
