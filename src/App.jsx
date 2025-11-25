@@ -10,7 +10,7 @@ import Register from "./pages/Register";
 import Dashboard from './pages/Dashboard';
 import Upload from './pages/Upload';
 import Chatbot from './pages/Chatbot';
-import Knowledge from "./pages/knowledge";
+import Knowledge from "./pages/Knowledge";
 import ActivityPage from './pages/ActivityPage';
 import FarmerProfile from './pages/FarmerProfile';
 import UpdateProfileForm from './pages/UpdateProfile';
