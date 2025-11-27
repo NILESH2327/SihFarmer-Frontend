@@ -61,7 +61,7 @@ const Dashboard = () => {
   useEffect(() => {
     const getWeatherData = async (location) => {
       const apiKey = import.meta.env.WEATHER_API_KEY;
-      const url = `http://api.weatherapi.com/v1/forecast.json?key=748c922b6b124c14ad305356252111&q=${location}&days=4&aqi=no&alerts=no`;
+      const url = `https://api.weatherapi.com/v1/forecast.json?key=748c922b6b124c14ad305356252111&q=${location}&days=4&aqi=no&alerts=no`;
       try {
         const response = await fetch(url);
         if (!response.ok) {
@@ -112,7 +112,8 @@ const Dashboard = () => {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Farmer Dashboard</h1>
           <p className="text-gray-600">Your personalized farming insights and recommendations</p>
         </div>
-        <AddActivity />
+        <div className='w-full mb-8'><AddActivity /></div>  
+        
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
           <div className="lg:col-span-2">

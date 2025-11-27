@@ -58,7 +58,7 @@ function App() {
                 <Route path="/chatbot" element={<Chatbot />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/activity" element={<ActivityPage />} />
+                {/* <Route path="/activity" element={<ActivityPage />} /> */}
                 <Route path="/farmer-profile" element={<FarmerProfile />} />
                 <Route path="/update-profile" element={<UpdateProfileForm />} />
                 <Route path="/knowledge" element={<Knowledge />} />
@@ -66,7 +66,7 @@ function App() {
                 <Route path="/plot/:id" element={<PlotDetails />} />
                 <Route path="/add-plot" element={<AddPlot />} />
                 <Route path="/verify-otp" element={<VerifyOtp />} />
-                <Route path="/all-activities" element={<ActivityDashboard />} />
+                <Route path="/Activity" element={<ActivityDashboard />} />
                 <Route path="/admin-panel" element={<AdminPanel />} />
                 <Route path="/pest-detection" element={<DetectPest />} />
                 

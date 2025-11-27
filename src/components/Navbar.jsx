@@ -18,7 +18,7 @@ const Navbar = ({ isAuthenticated }) => {
     { path: "/", label: t("home") },
     { path: "/dashboard", label: t("dashboard") },
     // { path: "/upload", label: t("upload") },
-    // { path: "/chatbot", label: t("chatbot") },
+    { path: "/Activity", label: t("My Activity") },
     { path: "/knowledge", label: "Knowledge Engine" },
   ];
 
