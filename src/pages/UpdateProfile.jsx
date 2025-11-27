@@ -13,8 +13,11 @@ import {
   Ruler
 } from "lucide-react";
 import { getJSON, postJSON } from "../api";
+import { useNavigate } from "react-router-dom";
+
 
 export default function UpdateProfilePage() {
+  const navigate = useNavigate();
   const [profile, setProfile] = useState({
     name: "",
     email: "",
@@ -80,7 +83,12 @@ export default function UpdateProfilePage() {
 
     try {
       const res = await postJSON("/farmer/update", profile);
-      if (res.ok) alert("Profile updated!");
+      console.log("Response from server:", res); 
+    if(res && res._id) {
+        alert("Profile updated!");
+        navigate("/farmer-profile");
+        window.scrollTo(0, 0);
+      }
     } catch {
       alert("Update failed!");
     }
