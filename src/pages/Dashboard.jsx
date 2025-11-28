@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Cloud, Thermometer, Droplets, Wind, TrendingUp, TrendingDown, Award, FileText, Microscope, Bug } from 'lucide-react';
+import { Cloud, Thermometer, Droplets, Wind, TrendingUp, TrendingDown, Award, FileText, } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getweekday } from '../lib/actions/weather';
+
+
 
 import { Link, useNavigate } from 'react-router-dom';
 import { isAuthenticated } from '../lib/actions/authActions';
@@ -11,6 +13,8 @@ import AddActivity from '../components/AddActivity';
 import { postJSON } from '../api';
 import axios from 'axios';
 import MarketTrends from '../components/MarketTrends';
+import WeatherCard from '../components/WeatherCard';
+import Grid from '../components/Dashboard/Grid';
 
 const Dashboard = () => {
   const [cropTips, setcropTips] = useState([]);
@@ -18,7 +22,19 @@ const Dashboard = () => {
   const [marketPrices, setMarketPrices] = useState([]);
   const [schemes, setSchemes] = useState([]);
   const { t } = useLanguage();
-  const [Weather, setWeather] = useState();
+
+  const [Weather, setWeather] = useState(null);
+
+  // Load default weather on mount
+  useEffect(() => {
+    const load = async () => {
+      const res = await fetch(`/api/weather?location=Kerala`);
+      const data = await res.json();
+      setWeather(data);
+    };
+    load();
+  }, []);
+
   const fetchData = async () => {
 
     try {
@@ -61,6 +77,7 @@ const Dashboard = () => {
   // get weather data
   useEffect(() => {
     const getWeatherData = async (location) => {
+
       const apiKey = import.meta.env.WEATHER_API_KEY;
       const url = `https://api.weatherapi.com/v1/forecast.json?key=748c922b6b124c14ad305356252111&q=${location}&days=4&aqi=no&alerts=no`;
       try {
@@ -101,8 +118,10 @@ const Dashboard = () => {
   }, []);
 
   if (!Weather) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>; ``
   }
+
+
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -113,107 +132,16 @@ const Dashboard = () => {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Farmer Dashboard</h1>
           <p className="text-gray-600">Your personalized farming insights and recommendations</p>
         </div>
-        <div className='w-full mb-8'><AddActivity /></div>  
-        
+        <div className='w-full mb-8'><AddActivity /></div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <WeatherCard Weather={Weather} setWeather={setWeather} />
+            <Grid/>
 
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                <Cloud className="h-6 w-6 text-blue-600 mr-2" />
-                {t('weatherForecast')}
-              </h2>
 
-              <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-6 text-white mb-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold mb-1">{Weather.location.name}, {Weather.location.country}</h3>
-                    <p className="text-blue-100">{Weather.current.condition.text}</p>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-4xl font-bold">{Weather.current.temp_c}°C</div>
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-blue-400">
-                  <div className="flex items-center space-x-2">
-                    <Thermometer className="h-4 w-4" />
-                    <span className="text-sm">Feels like {Weather.current.feelslike_c}°C</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Droplets className="h-4 w-4" />
-                    <span className="text-sm">{Weather.current.humidity}% Humidity</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Wind className="h-4 w-4" />
-                    <span className="text-sm">{Weather.current.wind_kph} km/h</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 justify-center items-center">
-                {Weather.forecast.forecastday.map((day, index) => (
-                  <div key={index} className="text-center p-4 bg-gray-50 rounded-lg">
-                    <p className="font-semibold text-gray-900 mb-2">{getweekday(day.date)}</p>
-                    <div className="text-2xl mb-2 w-fit mx-auto">
-                      <img src={day.day.condition.icon} alt="" />
-                    </div>
-                    <p className="text-sm text-gray-600 mb-1">{day.day.condition.text}</p>
-                    <div className="text-sm">
-                      <span className="font-semibold">{day.day.maxtemp_c}°</span>
-                      <span className="text-gray-500 ml-1">{day.day.mintemp_c}°</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="w-full mb-8 flex flex-col md:flex-row gap-4">
-              <Link
-                to="/upload"
-                className="flex-1 bg-green-50 rounded-xl shadow-lg p-6 mb-8 hover:bg-green-100 transition-colors"
-              >
-                <div className="flex items-center text-xl font-semibold mb-2 text-emerald-800">
-                  <Microscope className="mr-2 h-6 w-6" />
-                  Detect Crop Disease
-                </div>
-                <p className="text-xs text-gray-600 leading-relaxed">
-                  Use our AI-powered tool to identify crop diseases from images. Simply upload a photo of the affected
-                  plant, and receive instant analysis and treatment recommendations.
-                </p>
-              </Link>
-
-              <Link
-                to="/pest-detection"
-                className="flex-1 bg-green-100 rounded-xl shadow-lg p-6 mb-8 hover:bg-green-200 transition-colors"
-              >
-                <div className="flex items-center text-xl font-semibold mb-2 text-lime-800">
-                  <Bug className="mr-2 h-6 w-6" />
-                  Pest Detection
-                </div>
-                <p className="text-xs text-gray-600 leading-relaxed">
-                  Upload images of your crops to identify pests and receive tailored management advice to protect your yield.
-                </p>
-              </Link>
-            </div>
-
-            <div className="w-full mb-8 flex flex-col md:flex-row gap-4">
-              <Link
-                to="/market-trends"
-                className="flex-1 rounded-2xl bg-gradient-to-br from-green-50 to-green-100 p-6 shadow-md hover:shadow-xl hover:scale-[1.02] transition-all duration-300"
-              >
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-xl font-bold text-green-800">
-                    Market Trends
-                  </span>
-                </div>
-
-                <p className="text-sm text-gray-700 leading-relaxed">
-                  Stay updated with the latest market prices for crops in your region and make informed selling decisions.
-                </p>
-              </Link>
-            </div>
 
 
 

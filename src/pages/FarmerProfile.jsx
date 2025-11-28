@@ -11,7 +11,11 @@ export default function FarmerProfile() {
 
   const defaultProfile = {
     name: "",
-    location: "",
+    location: {
+      latitude: "",
+      longitude: "",
+      district: "",
+    },
     crop: "",
     landSize: "",
     soilType: "",
@@ -78,7 +82,7 @@ export default function FarmerProfile() {
 
             <p className="text-gray-700 text-lg flex items-center gap-2 mt-1">
               <MapPin size={18} className="text-green-600" />
-              {profile.location || "Location not added"}
+              {profile.location.district || "Location not added"}
             </p>
 
             {/* Grid Fields */}

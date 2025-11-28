@@ -27,6 +27,8 @@ import ActivityDashboard from './pages/ActivityDashboard';
 import DetectPest from './pages/PestDetection';
 import MarketTrends from './components/MarketTrends';
 import TwilioInvite from './pages/TwilioInvite';
+import CommodityMarketplace from './pages/MarketPlace';
+
 
 
 function App() {
@@ -72,6 +74,7 @@ function App() {
                 <Route path="/pest-detection" element={<DetectPest />} />
                 <Route path='/market-trends' element={<MarketTrends/>} />
                 <Route path="/twilio-invite" element={<TwilioInvite/>} />
+                <Route path='/market-place' element={<CommodityMarketplace/>} />
                
                 
 

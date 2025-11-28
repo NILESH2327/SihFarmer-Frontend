@@ -99,33 +99,9 @@ export default function ActivityDashboard() {
     setSuggestions([]);
     setLastAiAt(null);
 
-    const recentActivities = activities
-      .slice() // copy
-      .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-      .slice(0, 20)
-      .map(a => ({
-        type: a.type || 'other',
-        note: truncate(a.note || '', 500),
-        timestamp: a.timestamp || a._id || null
-      }));
-
-    const allActivities = activities.slice(0, 200).map(a => ({
-      type: a.type || 'other',
-      note: truncate(a.note || '', 300),
-      timestamp: a.timestamp || a._id || null
-    }));
-
-    const payload = {
-      topActivities: topActivityTypes,    // [{type, count}, ...]
-      recentActivities,                   // most recent 20 (full notes)
-      allActivities,                      // up to 200 for broader pattern detection
-      // optional: you can add context like location/crop if available in your app
-      // context: { location: 'Jhansi', crop: 'paddy' }
-    };
-
     try {
       // call backend AI endpoint (implement server side to call LLM or rules engine)
-      const res = await postJSON('/ai/activity-suggestions', payload);
+      const res = await postJSON('/advisory/generate-suggestions');
       if (res && res.suggestions) {
         setSuggestions(res.suggestions);
         setLastAiAt(new Date().toISOString());
@@ -158,7 +134,7 @@ export default function ActivityDashboard() {
                   <div className="text-xs text-gray-500">Total activities</div>
                 </div>
                 <button
-                  onClick={() => { setLoading(true); getJSON('/activity/list').then(r => setActivities(r.data || [])).finally(()=>setLoading(false)); }}
+                  onClick={() => { setLoading(true); getJSON('/activity/list').then(r => setActivities(r.data || [])).finally(() => setLoading(false)); }}
                   className="inline-flex items-center gap-2 px-3 py-2 bg-white border rounded-md text-sm hover:shadow"
                   title="Refresh"
                 >
@@ -284,12 +260,37 @@ export default function ActivityDashboard() {
               {suggestions.map((s, i) => (
                 <div key={i} className="border rounded-lg p-3 bg-gray-50">
                   <div className="flex items-center justify-between">
-                    <div className="font-medium text-gray-800">{s.title || `Suggestion ${i+1}`}</div>
-                    {s.confidence && <div className="text-xs text-gray-500">{Math.round(s.confidence*100)}%</div>}
+                    <div className="font-medium text-gray-800">
+                      {s.title || `Suggestion ${i + 1}`}
+                    </div>
+
+                    {s.confidence && (
+                      <div className="text-xs text-gray-500">
+                        {Math.round(s.confidence * 100)}%
+                      </div>
+                    )}
                   </div>
-                  {s.detail && <div className="mt-2 text-sm text-gray-700">{s.detail}</div>}
+
+                  {s.description && (
+                    <div className="mt-2 text-sm text-gray-700">
+                      {s.description}
+                    </div>
+                  )}
+
+                  {s.timing && (
+                    <div className="mt-1 text-xs text-gray-600">
+                      <span className="font-medium">Timing:</span> {s.timing}
+                    </div>
+                  )}
+
+                  {s.reason && (
+                    <div className="mt-1 text-xs text-gray-600">
+                      <span className="font-medium">Reason:</span> {s.reason}
+                    </div>
+                  )}
                 </div>
               ))}
+
 
               {lastAiAt && <div className="text-xs text-gray-400 mt-2">Last generated: {prettyDate(lastAiAt)}</div>}
             </div>

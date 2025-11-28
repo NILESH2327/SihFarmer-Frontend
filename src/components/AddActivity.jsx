@@ -1,6 +1,7 @@
 import React from "react";
 import { postJSON } from "../api";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function AddActivity() {
   const defaultform = {
@@ -15,7 +16,13 @@ export default function AddActivity() {
     console.log("Submitting Activity:", form);
 
     const res = await postJSON('/activity/add', form);
-    console.log("Activity Added:", res);
+    console.log("Activity Added:", res.farmerId);
+    if (res.farmerId) {
+    toast.success("Activity logged successfully!");
+    } else {
+      toast.error("Failed to log activity. Please try again.");
+    }
+
 
     setform(defaultform); // reset form fields
   };
