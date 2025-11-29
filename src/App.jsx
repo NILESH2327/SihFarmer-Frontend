@@ -28,6 +28,11 @@ import DetectPest from './pages/PestDetection';
 import MarketTrends from './components/MarketTrends';
 import TwilioInvite from './pages/TwilioInvite';
 import CommodityMarketplace from './pages/MarketPlace';
+import RequirementDetails from './pages/Requirements';
+import Schemes from './pages/Schemes';
+import SellBuyForm from './pages/SellBuyForm';
+import SchemeForm from './pages/AddScheme';
+import SchemeDetailPage from './pages/SChemePage';
 
 
 
@@ -74,7 +79,16 @@ function App() {
                 <Route path="/pest-detection" element={<DetectPest />} />
                 <Route path='/market-trends' element={<MarketTrends/>} />
                 <Route path="/twilio-invite" element={<TwilioInvite/>} />
+
+                {/* Schemes Route */}
+                <Route path="/schemes" element={<Schemes />} />
+                <Route path="/schemes/add" element={<SchemeForm />} />
+                <Route path='/schemes/:id' element={<SchemeDetailPage/>} />
+
+                {/* Market Routes */}
                 <Route path='/market-place' element={<CommodityMarketplace/>} />
+                <Route path='/market-place/create-requirement' element={<SellBuyForm/>} />
+                <Route path="/requirements/:id" element={<RequirementDetails />} />
                
                 
 

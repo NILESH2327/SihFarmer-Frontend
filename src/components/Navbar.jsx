@@ -15,11 +15,12 @@ const Navbar = ({ isAuthenticated }) => {
   };
 
   const navItems = [
-    { path: "/", label: t("home") },
+    // { path: "/", label: t("home") },
     { path: "/dashboard", label: t("dashboard") },
     // { path: "/upload", label: t("upload") },
     { path: "/Activity", label: t("My Activity") },
     { path: "/knowledge", label: "Knowledge Engine" },
+    {path: "/schemes", label: t("Schemes")},
   ];
 
   const isActive = (path) => location.pathname === path;
@@ -40,6 +41,18 @@ const Navbar = ({ isAuthenticated }) => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
+
+             {isAuthenticated?"":<Link
+                key={"home"}
+                to={"/"}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  isActive('/')
+                    ? "bg-green-100 text-green-700"
+                    : "text-gray-600 hover:text-green-600 hover:bg-green-50"
+                }`}
+              >
+                {t("Home")}
+              </Link>}
             {navItems.map((item) => (
               <Link
                 key={item.path}

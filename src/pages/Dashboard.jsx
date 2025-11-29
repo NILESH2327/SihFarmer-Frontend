@@ -46,9 +46,7 @@ const Dashboard = () => {
       if (sres.data.success) setSchemes(sres.data.data);
     } catch (e) {
       setError(e.message || "Failed to fetch");
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
 
