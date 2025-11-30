@@ -32,7 +32,7 @@ import RequirementDetails from './pages/Requirements';
 import Schemes from './pages/Schemes';
 import SellBuyForm from './pages/SellBuyForm';
 import SchemeForm from './pages/AddScheme';
-import SchemeDetailPage from './pages/SChemePage';
+import SchemeDetailPage from './pages/SchemePage';
 import AdminDashboard from './pages/AdminDashboard';
 
 
