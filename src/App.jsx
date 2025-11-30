@@ -26,6 +26,8 @@ import FloatingChatbot from './components/FloatingChatbot';
 import ActivityDashboard from './pages/ActivityDashboard';
 import DetectPest from './pages/PestDetection';
 import MarketTrends from './components/MarketTrends';
+
+// YOUR ROUTES (from HEAD)
 import TwilioInvite from './pages/TwilioInvite';
 import CommodityMarketplace from './pages/MarketPlace';
 import RequirementDetails from './pages/Requirements';
@@ -34,7 +36,8 @@ import SellBuyForm from './pages/SellBuyForm';
 import SchemeForm from './pages/AddScheme';
 import SchemeDetailPage from './pages/SChemePage';
 
-
+// NEW ROUTE FROM GITHUB
+import CropCalendar from "./components/CropCalendar";
 
 function App() {
   const [isLogged, setIsLogged] = useState(false);
@@ -42,16 +45,13 @@ function App() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     console.log("this is the token ", token);
-    if(token !== null) setIsLogged(true);
-    else setIsLogged(false);   
+    if (token !== null) setIsLogged(true);
+    else setIsLogged(false);
   }, [])
-  
 
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-
       <LanguageProvider>
-
         <Router>
           <ToastContainer position="bottom-right" />
 
@@ -60,48 +60,60 @@ function App() {
 
             <main className="flex-1">
               <Routes>
+
                 <Route path="/" element={<HomePage />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/upload" element={<Upload />} />
                 {/* <Route path="/chatbot" element={<Chatbot />} /> */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
-                {/* <Route path="/activity" element={<ActivityPage />} /> */}
                 <Route path="/farmer-profile" element={<FarmerProfile />} />
                 <Route path="/update-profile" element={<UpdateProfileForm />} />
                 <Route path="/knowledge" element={<Knowledge />} />
+
+                {/* PLOTS */}
                 <Route path="/plot" element={<AllPlots />} />
                 <Route path="/plot/:id" element={<PlotDetails />} />
                 <Route path="/add-plot" element={<AddPlot />} />
-                <Route path="/verify-otp" element={<VerifyOtp />} />
-                <Route path="/Activity" element={<ActivityDashboard />} />
-                <Route path="/admin-panel" element={<AdminPanel />} />
-                <Route path="/pest-detection" element={<DetectPest />} />
-                <Route path='/market-trends' element={<MarketTrends/>} />
-                <Route path="/twilio-invite" element={<TwilioInvite/>} />
 
-                {/* Schemes Route */}
+                {/* OTP */}
+                <Route path="/verify-otp" element={<VerifyOtp />} />
+
+                {/* ACTIVITY */}
+                <Route path="/Activity" element={<ActivityDashboard />} />
+
+                {/* ADMIN */}
+                <Route path="/admin-panel" element={<AdminPanel />} />
+
+                {/* PEST & MARKET */}
+                <Route path="/pest-detection" element={<DetectPest />} />
+                <Route path='/market-trends' element={<MarketTrends />} />
+
+                {/* TWILIO */}
+                <Route path="/twilio-invite" element={<TwilioInvite />} />
+
+                {/* SCHEMES */}
                 <Route path="/schemes" element={<Schemes />} />
                 <Route path="/schemes/add" element={<SchemeForm />} />
-                <Route path='/schemes/:id' element={<SchemeDetailPage/>} />
+                <Route path='/schemes/:id' element={<SchemeDetailPage />} />
 
-                {/* Market Routes */}
-                <Route path='/market-place' element={<CommodityMarketplace/>} />
-                <Route path='/market-place/create-requirement' element={<SellBuyForm/>} />
+                {/* MARKETPLACE */}
+                <Route path='/market-place' element={<CommodityMarketplace />} />
+                <Route path='/market-place/create-requirement' element={<SellBuyForm />} />
                 <Route path="/requirements/:id" element={<RequirementDetails />} />
-               
-                
 
+                {/* NEW GITHUB ROUTE */}
+                <Route path="/crop-calendar" element={<CropCalendar />} />
 
               </Routes>
             </main>
 
             <Footer />
           </div>
-        ̌<FloatingChatbot/>
+
+          <FloatingChatbot />
         </Router>
-                </LanguageProvider>
-      
+      </LanguageProvider>
     </GoogleOAuthProvider>
   );
 }
