@@ -33,6 +33,7 @@ import Schemes from './pages/Schemes';
 import SellBuyForm from './pages/SellBuyForm';
 import SchemeForm from './pages/AddScheme';
 import SchemeDetailPage from './pages/SChemePage';
+import AdminDashboard from './pages/AdminDashboard';
 
 
 
@@ -82,13 +83,16 @@ function App() {
 
                 {/* Schemes Route */}
                 <Route path="/schemes" element={<Schemes />} />
-                <Route path="/schemes/add" element={<SchemeForm />} />
                 <Route path='/schemes/:id' element={<SchemeDetailPage/>} />
 
                 {/* Market Routes */}
                 <Route path='/market-place' element={<CommodityMarketplace/>} />
                 <Route path='/market-place/create-requirement' element={<SellBuyForm/>} />
                 <Route path="/requirements/:id" element={<RequirementDetails />} />
+
+                {/* Admin Routes */}
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                <Route path="/admin/schemes/add" element={<SchemeForm />} />
                
                 
 
