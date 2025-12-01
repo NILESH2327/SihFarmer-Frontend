@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const TwilioInvite = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-green-50 to-green-100 px-4">
+    <div className="min-h-screen flex items-center justify-center  px-4" style={{ backgroundImage: "url('/bg5.jpg')" }}>
       <div className="bg-white mt-10 mb-10 px-10 py-10 rounded-2xl shadow-2xl w-full max-w-lg border border-green-200 flex flex-col items-center text-center">
         {/* Title */}
         <h2 className="text-2xl font-bold text-green-700 mb-3">

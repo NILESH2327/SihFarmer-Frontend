@@ -1,195 +1,213 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { getJSON } from "../api";
+
 import { Link } from "react-router-dom";
+
+
+
+// lucide icons
 import {
-  Bell,
-  Droplets,
-  Layers,
-  Leaf,
-  ListOrdered,
-  MapPin,
-  Mountain,
-  PlusCircle,
   User,
+  LayoutDashboard,
+  Bell,
+  Layers,
+  PlusCircle,
+  MapPin,
+  Leaf,
+  Mountain,
+  Droplets,
+  Mail,
+  Phone,
+  Globe,
+  LogOut,
 } from "lucide-react";
+
+/* ---------------- LOCATION RENDER FUNCTION ---------------- */
+function renderLocation(location) {
+  if (!location) return "Location not added";
+
+  // If backend sends object
+  if (typeof location === "object") {
+    return (
+      <>
+        <span className="font-semibold">{location.district}</span> <br />
+        Lat: {location.latitude} <br />
+        Lng: {location.longitude}
+      </>
+    );
+  }
+
+  // If it's a string
+  return location;
+}
 
 export default function FarmerProfile() {
   const [lang, setLang] = useState("en-IN");
 
   const defaultProfile = {
     name: "",
-    location: {
-      latitude: "",
-      longitude: "",
-      district: "",
-    },
-    crop: "",
+    location: "",
+    primaryCrop: "",
     landSize: "",
     soilType: "",
     irrigation: "",
     profileImage: null,
     primaryCrop: "",
+    email: "",
+    phone: "",
+    profileImage: "",
   };
 
   const [profile, setProfile] = useState(defaultProfile);
 
-  // Load profile from server on mount (if available)
   useEffect(() => {
     (async () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) return;
-        const res = await getJSON(`/farmer/profile`, token);
-        setProfile({ ...res });
+        // const res = await getJSON(`/farmer/profile`, token);
+        // setProfile({ ...res });
+        const res = await getJSON("/farmer/profile", token);
+        setProfile(res);
       } catch (err) {
-        console.log("Server not available, using local profile");
+        console.log("Failed to load profile");
       }
     })();
   }, []);
 
-  /* Small reusable card */
-  function DetailCard({ icon, title, value }) {
-    return (
-      <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100 shadow-sm">
-        <div className="p-2 bg-green-100 rounded-full">{icon}</div>
-        <div>
-          <p className="text-xs text-gray-500">{title}</p>
-          <p className="text-sm font-semibold text-gray-800">{value}</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-green-50 to-green-100 px-4 py-8">
-      <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg border border-green-100 overflow-hidden">
-        {/* Header section */}
-        <div className="flex flex-col md:flex-row items-center gap-6 px-6 pt-6 pb-4">
-          {/* Profile Image */}
-          <div className="flex flex-col items-center">
-            <img
-              src={
-                profile.profileImage ||
-                "https://cdn-icons-png.flaticon.com/512/9131/9131529.png"
-              }
-              alt="Farmer"
-              className="w-28 h-28 rounded-full border-4 border-green-400 shadow-md object-cover"
-            />
-          </div>
+    <div className="min-h-screen bg-gray-100 flex">
 
-          {/* Profile Details */}
-          <div className="flex-1 w-full">
-            <h1 className="text-2xl md:text-3xl font-bold text-green-800">
-              {profile.name || "Farmer Name"}
-            </h1>
+      {/* ---------------- RIGHT MAIN PANEL ---------------- */}
+      <main className="flex-1 p-6 md:p-10 overflow-y-auto">
 
-            <p className="text-gray-700 text-sm md:text-base flex items-center gap-2 mt-1">
-              <MapPin size={18} className="text-green-600" />
-              {profile.location.district || "Location not added"}
-            </p>
+        <h1 className="text-3xl font-bold text-gray-800">Profile Settings</h1>
+        <p className="text-gray-500 mt-1">
+          Manage your profile, farm details, and account settings.
+        </p>
 
-            {/* Grid Fields */}
-            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <DetailCard
-                icon={<Leaf className="text-green-600" />}
-                title="Primary Crop"
-                value={profile.primaryCrop || "—"}
-              />
+        {/* MAIN GRID LAYOUT */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
 
-              <DetailCard
-                icon={<Mountain className="text-green-600" />}
-                title="Land Size"
-                value={profile.landSize ? `${profile.landSize} acres` : "—"}
-              />
+          {/* LEFT COLUMN */}
+          <div className="lg:col-span-1 space-y-6">
 
-              <DetailCard
-                icon={<Mountain className="text-green-600" />}
-                title="Soil Type"
-                value={profile.soilType || "—"}
-              />
+            {/* Profile Card */}
+            <div className="bg-white shadow rounded-2xl p-6 border">
+              <div className="flex flex-col items-center text-center">
+                <img
+                  src={
+                    profile.profileImage ||
+                    "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                  }
+                  className="w-28 h-28 rounded-full border-4 border-green-500 object-cover shadow"
+                  alt="Farmer"
+                />
+                <h2 className="mt-4 text-xl font-bold text-gray-800">
+                  {profile.name || "Farmer Name"}
+                </h2>
 
-              <DetailCard
-                icon={<Droplets className="text-green-600" />}
-                title="Irrigation"
-                value={profile.irrigation || "—"}
-              />
+                <p className="text-gray-600 flex items-center gap-2 mt-1">
+                  <MapPin size={16} className="text-green-600" />
+                  {renderLocation(profile.location)}
+                </p>
+
+                <Link
+                  to="/update-profile"
+                  className="mt-4 bg-green-600 text-white px-5 py-2 rounded-xl hover:bg-green-700"
+                >
+                  Edit Profile
+                </Link>
+              </div>
+            </div>
+
+            {/* Contact Card */}
+            <div className="bg-white shadow rounded-2xl p-6 border space-y-4">
+              <h3 className="text-lg font-semibold text-gray-800">Contact</h3>
+
+              <Row icon={<Mail />} label="Email" value={profile.email} />
+              <Row icon={<Phone />} label="Phone" value={profile.phone} />
             </div>
           </div>
-        </div>
 
-        {/* Divider */}
-        <div className="border-t border-gray-100 mt-2" />
+          {/* RIGHT COLUMN */}
+          <div className="lg:col-span-2 space-y-6">
 
-        {/* Menu section */}
-        <div className="px-6 py-6 bg-gray-50/60">
-          <h2 className="text-base font-semibold text-gray-800 mb-4">
-            Manage your farm data
-          </h2>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {/* Update Profile */}
-            <Link
-              to={"/update-profile"}
-              className="cursor-pointer bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition border border-gray-200/80 hover:border-green-200"
-            >
-              <User className="text-green-700 w-8 h-8 mb-3" />
-              <h3 className="text-sm font-semibold text-gray-800">
-                Update Profile
+            {/* Farm Info */}
+            <div className="bg-white shadow rounded-2xl p-6 border">
+              <h3 className="text-xl font-semibold mb-4 text-gray-800">
+                Farm Details
               </h3>
-              <p className="text-gray-500 text-xs mt-1">
-                Edit crop, soil, irrigation & location.
-              </p>
-            </Link>
 
-            {/* Notifications */}
-            <div className="cursor-pointer bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition border border-gray-200/80 hover:border-green-200">
-              <Bell className="text-green-700 w-8 h-8 mb-3" />
-              <h3 className="text-sm font-semibold text-gray-800">
-                Notifications
-              </h3>
-              <p className="text-gray-500 text-xs mt-1">
-                View alerts & updates from Krishi.
+              <div className="grid sm:grid-cols-2 gap-6">
+                <Detail label="Primary Crop" value={profile.primaryCrop} icon={<Leaf />} />
+                <Detail label="Land Size" value={profile.landSize ? `${profile.landSize} acres` : "—"} icon={<Mountain />} />
+                <Detail label="Soil Type" value={profile.soilType} icon={<Mountain />} />
+                <Detail label="Irrigation" value={profile.irrigation} icon={<Droplets />} />
+              </div>
+            </div>
+
+            {/* Address Section */}
+            <div className="bg-white shadow rounded-2xl p-6 border">
+              <h3 className="text-xl font-semibold mb-4 text-gray-800">Address</h3>
+
+              <p className="text-gray-600">
+                {renderLocation(profile.location)}
               </p>
             </div>
 
-            {/* Show Plots */}
-            <Link
-              to={"/plot"}
-              className="cursor-pointer bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition border border-gray-200/80 hover:border-green-200"
-            >
-              <Layers className="text-green-700 w-8 h-8 mb-3" />
-              <h3 className="text-sm font-semibold text-gray-800">Show Plots</h3>
-              <p className="text-gray-500 text-xs mt-1">
-                See all your registered farm plots.
-              </p>
-            </Link>
+            {/* Account Settings */}
+            <div className="bg-white shadow rounded-2xl p-6 border">
+              <h3 className="text-xl font-semibold mb-4 text-gray-800">
+                Account Settings
+              </h3>
 
-            {/* Add Plots */}
-            <Link
-              to={"/add-plot"}
-              className="cursor-pointer bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition border border-gray-200/80 hover:border-green-200"
-            >
-              <PlusCircle className="text-green-700 w-8 h-8 mb-3" />
-              <h3 className="text-sm font-semibold text-gray-800">Add Plots</h3>
-              <p className="text-gray-500 text-xs mt-1">
-                Add new plots with area and crop.
-              </p>
-            </Link>
-
-            {/* Your Orders */}
-            <Link
-              to={"/market/farmer"}
-              className="cursor-pointer bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition border border-gray-200/80 hover:border-green-200"
-            >
-              <ListOrdered className="text-green-700 w-8 h-8 mb-3" />
-              <h3 className="text-sm font-semibold text-gray-800">Your Orders</h3>
-              <p className="text-gray-500 text-xs mt-1">
-                Manage your created market orders.
-              </p>
-            </Link>
+              <div className="space-y-3">
+                <SettingRow label="Language" value="English (India)" icon={<Globe />} />
+                <SettingRow label="Account Type" value="Farmer" icon={<User />} />
+              </div>
+            </div>
           </div>
         </div>
+      </main>
+    </div>
+  );
+}
+
+/* ---------------- REUSABLE COMPONENTS ---------------- */
+
+function Row({ icon, label, value }) {
+  return (
+    <div className="flex items-center gap-3 text-gray-700">
+      <div className="p-2 bg-gray-100 rounded-xl text-green-700">{icon}</div>
+      <div>
+        <p className="text-xs text-gray-500">{label}</p>
+        <p className="font-semibold">{value || "—"}</p>
+      </div>
+    </div>
+  );
+}
+
+function Detail({ icon, label, value }) {
+  return (
+    <div className="flex items-center gap-4 bg-gray-50 border p-4 rounded-xl">
+      <div className="p-2 bg-green-100 rounded-xl text-green-700">{icon}</div>
+      <div>
+        <p className="text-gray-500 text-sm">{label}</p>
+        <p className="text-lg font-semibold text-gray-800">{value || "—"}</p>
+      </div>
+    </div>
+  );
+}
+
+function SettingRow({ icon, label, value }) {
+  return (
+    <div className="flex items-center gap-4 border-b pb-3">
+      <div className="text-green-700">{icon}</div>
+      <div>
+        <p className="font-semibold text-gray-700">{label}</p>
+        <p className="text-gray-500">{value}</p>
       </div>
     </div>
   );

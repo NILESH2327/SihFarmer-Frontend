@@ -42,7 +42,7 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-green-50 flex items-center justify-center px-4 pb-10 pt-10">
+    <div className="min-h-screen flex items-center justify-center px-4 pb-10 pt-10"  style={{ backgroundImage: "url('/bg3.jpg')" }}>
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md px-10 py-10 border border-green-100">
         {/* Logo + Brand */}
         <div className="flex flex-col items-center mb-6">

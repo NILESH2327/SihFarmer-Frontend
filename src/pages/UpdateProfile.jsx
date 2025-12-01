@@ -3,7 +3,6 @@ import {
   User,
   Mail,
   Phone,
-  MapPin,
   Mountain,
   Languages,
   Loader2,
@@ -37,7 +36,7 @@ export default function UpdateProfilePage() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [locLoading, setLocLoading] = useState(false);
-  const [title, settitle] = useState("Update Profile");
+  const [title, setTitle] = useState("Update Profile");
   const { state } = useLocation();
   const phone = state?.phone;
 
@@ -48,14 +47,14 @@ export default function UpdateProfilePage() {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        const res = await getJSON(`/farmer/profile`, token);
-        setProfile({ ...profile, ...res });
-        if (phone) settitle("Complete Your Profile");
+        const res = await getJSON(`/farmer/profile`);
+        setProfile((prev) => ({ ...prev, ...res }));
+        if (phone) setTitle("Complete Your Profile");
       } catch (err) {
         console.log("Server not available");
       }
     })();
-  }, []);
+  }, [phone]);
 
   // Validation function
   const validateProfile = (profile) => {
@@ -70,8 +69,10 @@ export default function UpdateProfilePage() {
     else if (!/^\d{10}$/.test(profile.phone))
       errs.phone = "Phone must be 10 digits";
 
-    if (!profile.primaryCrop.trim()) errs.primaryCrop = "Primary crop is required";
-    if (!profile.irrigation.trim()) errs.irrigation = "Irrigation is required";
+    if (!profile.primaryCrop.trim())
+      errs.primaryCrop = "Primary crop is required";
+    if (!profile.irrigation.trim())
+      errs.irrigation = "Irrigation is required";
 
     if (!profile.landSize.trim()) errs.landSize = "Land size is required";
     else if (isNaN(Number(profile.landSize)) || Number(profile.landSize) <= 0)
@@ -79,7 +80,8 @@ export default function UpdateProfilePage() {
 
     if (!profile.soilType.trim()) errs.soilType = "Soil type is required";
 
-    if (!profile.location.district.trim()) errs.district = "Location is required";
+    if (!profile.location.district.trim())
+      errs.district = "Location is required";
 
     return errs;
   };
@@ -93,10 +95,10 @@ export default function UpdateProfilePage() {
         const lat = pos.coords.latitude.toFixed(5);
         const long = pos.coords.longitude.toFixed(5);
         const city = await getCityName(lat, long);
-        setProfile({
-          ...profile,
+        setProfile((prev) => ({
+          ...prev,
           location: { latitude: lat, longitude: long, district: city },
-        });
+        }));
         setLocLoading(false);
         setErrors((prev) => ({ ...prev, district: null }));
       },
@@ -105,8 +107,8 @@ export default function UpdateProfilePage() {
         setLocLoading(false);
       },
       {
-        enableHighAccuracy: true, // use GPS
-        timeout: 10000, // wait max 10 sec
+        enableHighAccuracy: true,
+        timeout: 10000,
         maximumAge: 0,
       }
     );
@@ -128,10 +130,12 @@ export default function UpdateProfilePage() {
         localStorage.setItem("isProfileComplete", "true");
         navigate("/dashboard");
         window.scrollTo(0, 0);
+      } else {
+        toast.error("Update failed!");
       }
-    } catch(err) {
+    } catch (err) {
       alert("Update failed!");
-      console.log(err)
+      console.log(err);
     }
 
     setLoading(false);
@@ -151,8 +155,10 @@ export default function UpdateProfilePage() {
     >
       <div className="absolute inset-0 bg-black opacity-30 w-full h-full"></div>
 
-      <div className="relative p-6 max-w-4xl mx-auto bg-white bg-opacity-90 rounded-2xl shadow-lg border z-10">
-        <h1 className="text-3xl font-bold text-green-800 mb-8 text-center">{title}</h1>
+      <div className="relative p-6 max-w-4xl mx-auto w-2xl bg-white bg-opacity-90 rounded-2xl shadow-lg border z-10">
+        <h1 className="text-3xl font-bold text-green-800 mb-8 text-center">
+          {title}
+        </h1>
         <div className="p-8 rounded-2xl shadow-lg border grid grid-cols-1 md:grid-cols-2 gap-6 bg-white">
           <InputField
             label="Full Name"
@@ -208,6 +214,7 @@ export default function UpdateProfilePage() {
             error={errors.landSize}
           />
 
+          {/* Soil Type */}
           <InputField
             label="Soil Type"
             icon={<Mountain className="text-green-600" />}
@@ -217,39 +224,70 @@ export default function UpdateProfilePage() {
             error={errors.soilType}
           />
 
+          {/* Location with GPS */}
           <div>
-            <label className="text-xs font-semibold text-gray-600 mb-1 block">Location</label>
-            <div
-              className={`flex gap-2 border rounded-xl p-3 bg-gray-50 shadow-sm items-center ${
-                errors.district ? "border-red-500" : ""
-              }`}
-            >
-              <MapPin className="text-green-600" />
-              <input
-                type="text"
-                className="flex-grow bg-transparent outline-none text-sm"
-                placeholder="Enter location"
-                value={profile.location.district}
-                disabled
-              />
-              <button
-                onClick={autoFillLocation}
-                className="p-2 bg-green-200 rounded-lg text-green-800 hover:bg-green-300 transition"
-              >
-                {locLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <LocateFixed className="w-5 h-5" />}
-              </button>
+            <label className="text-sm font-semibold text-gray-600">
+              Location
+            </label>
+            <div className="flex flex-col gap-1 border rounded-xl p-3 bg-gray-50 shadow-sm">
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  className="flex-grow bg-transparent outline-none text-sm"
+                  placeholder="Detect your location"
+                  value={
+                    profile.location.district
+                      ? `${profile.location.district} (${profile.location.latitude}, ${profile.location.longitude})`
+                      : ""
+                  }
+                  disabled
+                />
+                <button
+                  type="button"
+                  onClick={autoFillLocation}
+                  disabled={locLoading}
+                  className={`p-2 rounded-lg text-green-800 transition flex items-center justify-center
+                    ${
+                      locLoading
+                        ? "bg-green-100 cursor-not-allowed"
+                        : "bg-green-200 hover:bg-green-300"
+                    }`}
+                >
+                  {locLoading ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <LocateFixed className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
+
+              {!profile.location.district && (
+                <p className="text-[11px] text-gray-500">
+                  Tap the GPS button to auto-fill your village / town using your
+                  current location.
+                </p>
+              )}
             </div>
-            {errors.district && <div className="text-xs text-red-600 mt-1">{errors.district}</div>}
+            {errors.district && (
+              <div className="text-xs text-red-600 mt-1">
+                {errors.district}
+              </div>
+            )}
           </div>
 
+          {/* Preferred Language */}
           <div>
-            <label className="text-xs font-semibold text-gray-600 mb-1 block">Preferred Language</label>
+            <label className="text-xs font-semibold text-gray-600 mb-1 block">
+              Preferred Language
+            </label>
             <div className="flex items-center gap-2 border rounded-xl p-3 bg-gray-50 shadow-sm">
               <Languages className="text-green-600" />
               <select
                 className="flex-grow bg-transparent outline-none text-sm"
                 value={profile.language}
-                onChange={(e) => setProfile({ ...profile, language: e.target.value })}
+                onChange={(e) =>
+                  setProfile({ ...profile, language: e.target.value })
+                }
               >
                 <option value="ml">Malayalam</option>
                 <option value="en">English</option>
@@ -260,6 +298,7 @@ export default function UpdateProfilePage() {
 
           <div className="md:col-span-2">
             <button
+              type="button"
               onClick={handleSave}
               className="w-full mt-2 bg-green-700 text-white py-3 rounded-xl shadow hover:bg-green-800 transition flex items-center justify-center gap-2"
             >
@@ -284,7 +323,11 @@ function InputField({ label, icon, value, placeholder, onChange, error }) {
   return (
     <div>
       <label className="text-xs font-semibold text-gray-600">{label}</label>
-      <div className={`flex items-center gap-2 border rounded-xl p-3 bg-gray-50 shadow-sm ${error ? "border-red-500" : ""}`}>
+      <div
+        className={`flex items-center gap-2 border rounded-xl p-3 bg-gray-50 shadow-sm ${
+          error ? "border-red-500" : ""
+        }`}
+      >
         {icon}
         <input
           type="text"

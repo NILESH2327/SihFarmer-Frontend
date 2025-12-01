@@ -27,6 +27,10 @@ import ActivityDashboard from './pages/ActivityDashboard';
 import DetectPest from './pages/PestDetection';
 import MarketTrends from './components/MarketTrends';
 
+import FertilizerGuidance from "./pages/FertilizerGuidance";
+import SoilScanner from './pages/SoilScanner';
+import NearbyAgriServices from './pages/NearbyAgriService';
+
 // YOUR ROUTES (from HEAD)
 import TwilioInvite from './pages/TwilioInvite';
 import CommodityMarketplace from './pages/MarketPlace';
@@ -53,7 +57,7 @@ function App() {
   }, [])
 
   return (
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+    <GoogleOAuthProvider clientId="145908921972-5nv0rla1inn6b7msb0svfvn4qp0n25hq.apps.googleusercontent.com">
       <LanguageProvider>
         <Router>
           <ToastContainer position="bottom-right" />
@@ -115,7 +119,19 @@ function App() {
                 
 
                 {/* NEW GITHUB ROUTE */}
-                <Route path="/crop-calender" element={<CropCalendar />} />
+                <Route path="/crop-calendar" element={<CropCalendar />} />
+                {/* Fertilizer Guidance */}
+                <Route path="/fertilizer-guidance" element={<FertilizerGuidance />} />
+
+                {/* Soil Scanner */}
+                <Route path="/soil-scanner" element={<SoilScanner />} />
+
+                {/* Nearby service*/}
+                <Route path="/nearby-service" element={<NearbyAgriServices />} />
+
+
+
+
 
               </Routes>
             </main>

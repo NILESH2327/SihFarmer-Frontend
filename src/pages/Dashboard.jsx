@@ -1,28 +1,31 @@
-import React, { useEffect, useState } from 'react';
-import { Award, FileText } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { Award, FileText } from "lucide-react";
+import { useLanguage } from "../contexts/LanguageContext";
+import { Link, useNavigate } from "react-router-dom";
+import { isAuthenticated } from "../lib/actions/authActions";
+import { toast } from "react-toastify";
 
-import { useLanguage } from '../contexts/LanguageContext';
-import { Link, useNavigate } from 'react-router-dom';
-import { isAuthenticated } from '../lib/actions/authActions';
-import { toast } from 'react-toastify';
-
-import AddActivity from '../components/AddActivity';
-import axios from 'axios';
+import AddActivity from "../components/AddActivity";
+import axios from "axios";
 
 // YOUR COMPONENTS
-import WeatherCard from '../components/WeatherCard';
-import Grid from '../components/Dashboard/Grid';
-import { postJSON } from '../api';
+import WeatherCard from "../components/WeatherCard";
+import Grid from "../components/Dashboard/Grid";
+import { postJSON } from "../api";
 
 const Dashboard = () => {
-  const [cropTips, setcropTips] = useState([]);
+  const [cropTips, setCropTips] = useState([]);
   const [marketPrices, setMarketPrices] = useState([]);
   const [schemes, setSchemes] = useState([]);
-  const [Weather, setWeather] = useState(null);
+  const [weather, setWeather] = useState(null);
+  const [loadingWeather, setLoadingWeather] = useState(true);
 
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const api = axios.create({ baseURL: import.meta.env.VITE_API_BASE });
+
+  const api = axios.create({
+    baseURL: import.meta.env.VITE_API_BASE,
+  });
 
   // Fetch Market & Schemes
   const fetchData = async () => {
@@ -31,57 +34,73 @@ const Dashboard = () => {
         api.get("/market/all"),
         api.get("/scheme/all"),
       ]);
+
       if (mres.data.success) setMarketPrices(mres.data.data);
       if (sres.data.success) setSchemes(sres.data.data);
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      console.error("Market/Schemes error:", err);
     }
   };
 
-  // Fetch Crop Tips
+  // AI Crop Tips
   const getTips = async () => {
-    const tips = await postJSON('/advisory/generate-advisory', {});
-    setcropTips(tips.advisories || []);
+    try {
+      const tips = await postJSON("/advisory/generate-advisory", {});
+      setCropTips(tips?.advisories || []);
+    } catch (err) {
+      console.error("AI Tips error:", err);
+    }
   };
 
-  // Authentication + Load tips & data
-  useEffect(() => {
-    if (!isAuthenticated()) {
-      toast.error("Please login First");
-      navigate('/login');
-    }
-    getTips();
-    fetchData();
-  }, []);
+  // Weather Fetch
+  const loadWeather = async () => {
+    try {
+      const key = import.meta.env.VITE_WEATHER_API_KEY;
+      const url = `https://api.weatherapi.com/v1/forecast.json?key=${key}&q=Kerala&days=4&aqi=no&alerts=no`;
 
-  // Fetch Weather
-  useEffect(() => {
-    const loadWeather = async () => {
-      try {
-        const url =
-          `https://api.weatherapi.com/v1/forecast.json?key=748c922b6b124c14ad305356252111&q=Kerala&days=4&aqi=no&alerts=no`;
+      const response = await fetch(url);
+      const data = await response.json();
 
-        const response = await fetch(url);
-        const data = await response.json();
-
+      if (data?.current) {
         data.current.temp_c = Math.ceil(data.current.temp_c);
         data.current.feelslike_c = Math.ceil(data.current.feelslike_c);
         data.current.humidity = Math.ceil(data.current.humidity);
         data.current.wind_kph = Math.ceil(data.current.wind_kph);
-
-        setWeather(data);
-      } catch (error) {
-        console.log(error);
       }
-    };
 
+      setWeather(data);
+    } catch (error) {
+      console.log("Weather error:", error);
+    } finally {
+      setLoadingWeather(false);
+    }
+  };
+
+  // Auth Check + Initial Data Load
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      toast.error("Please login first");
+      navigate("/login");
+      return;
+    }
+
+    getTips();
+    fetchData();
     loadWeather();
   }, []);
 
-  if (!Weather) {
+  if (loadingWeather) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-green-50">
-        <p className="text-gray-600">Loading dashboard...</p>
+        <p className="text-gray-600">Loading weather...</p>
+      </div>
+    );
+  }
+
+  if (!weather) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-green-50">
+        <p className="text-red-500">Failed to load weather data.</p>
       </div>
     );
   }
@@ -92,7 +111,9 @@ const Dashboard = () => {
         {/* TITLE */}
         <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Farmer Dashboard</h1>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Farmer Dashboard
+            </h1>
             <p className="text-sm text-gray-600">
               Your personalized farming insights and recommendations
             </p>
@@ -101,16 +122,16 @@ const Dashboard = () => {
 
         {/* ADD ACTIVITY */}
         <div className="mb-8">
-          <div className="bg-white/90 rounded-2xl shadow-md border border-green-100 ">
+          <div className="bg-white/90 rounded-2xl shadow-md border border-green-100">
             <AddActivity />
           </div>
         </div>
 
-        {/* GRID MAIN */}
+        {/* MAIN GRID */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* LEFT SIDE */}
           <div className="lg:col-span-2 space-y-8">
-            <WeatherCard Weather={Weather} setWeather={setWeather} />
+            <WeatherCard Weather={weather} setWeather={setWeather} />
             <Grid />
           </div>
 
@@ -132,7 +153,7 @@ const Dashboard = () => {
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-gray-500">Loading...</p>
+                  <p className="text-sm text-gray-500">Loading tips...</p>
                 )}
               </div>
             </div>
@@ -158,7 +179,7 @@ const Dashboard = () => {
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-gray-500">Loading...</p>
+                  <p className="text-sm text-gray-500">Loading schemes...</p>
                 )}
               </div>
             </div>
@@ -171,6 +192,7 @@ const Dashboard = () => {
               <p className="text-sm text-gray-600 mb-4">
                 Update crop &amp; soil details
               </p>
+
               <Link
                 to="/farmer-profile"
                 className="block text-center bg-green-600 text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-green-700 transition-colors"
