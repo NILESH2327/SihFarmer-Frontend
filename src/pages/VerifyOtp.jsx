@@ -83,6 +83,10 @@ const VerifyOtp = () => {
     setResending(false);
   };
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
+  }, []);
+
   return (
     <div className="min-h-screen bg-green-50 flex items-center justify-center px-4" style={{ backgroundImage: "url('/bg4.jpg')" }}>
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md px-10 py-10 border border-green-100 text-center">

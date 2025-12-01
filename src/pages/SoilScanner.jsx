@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 
 export default function SoilScanner() {
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
+  }, []);
+
   const [form, setForm] = useState({
     N: 100,
     P: 20,

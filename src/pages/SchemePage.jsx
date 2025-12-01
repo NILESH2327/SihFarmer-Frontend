@@ -37,6 +37,10 @@ export default function SchemeDetailPage() {
     }
   }, [id]);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
+  }, []);
+  
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">

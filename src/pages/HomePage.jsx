@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Cloud, TrendingUp, Shield, Users } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const HomePage = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
+  }, []);
   const { t } = useLanguage();
 
   const features = [

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Calendar, Leaf, Sprout, CheckCircle } from "lucide-react";
 
@@ -10,6 +10,10 @@ const PlotDetails = () => {
     d.setDate(d.getDate() + 120);
     return d.toISOString().split("T")[0];
   };
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
+  }, []);
 
   return (
     <div className="min-h-screen bg-green-50 pb-10">

@@ -66,6 +66,10 @@ const Schemes = () => {
     fetchSchemes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, stateFilter, districtFilter, selectedFilter, selectedCategories, search]);
+  
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">

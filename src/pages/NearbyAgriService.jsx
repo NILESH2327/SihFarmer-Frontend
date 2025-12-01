@@ -10,6 +10,9 @@ import {
 } from "lucide-react";
 
 export default function NearbyAgriServices() {
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
+  }, []);
   const [location, setLocation] = useState(null);
   const [category, setCategory] = useState("all");
   const [services, setServices] = useState([]);

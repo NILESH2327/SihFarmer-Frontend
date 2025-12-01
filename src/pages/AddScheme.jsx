@@ -2,7 +2,7 @@
 // SchemeForm.jsx (Clean & Structured Version)
 // -----------------------------------------------
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { postJSON } from "../api";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -43,6 +43,9 @@ function ToggleButtonGroup({ value, onChange }) {
 // Main Component: SchemeForm
 // ------------------------------------------------
 export default function SchemeForm() {
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
+  }, []);
   // ---------------------------------------------
   // Basic States
   // ---------------------------------------------

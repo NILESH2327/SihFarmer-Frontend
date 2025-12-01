@@ -15,6 +15,9 @@ import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 
 const Upload = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
+  }, []);
   const navigate = useNavigate();
   useEffect(() => {
     console.log(isAuthenticated());

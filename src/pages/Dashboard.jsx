@@ -14,6 +14,7 @@ import Grid from "../components/Dashboard/Grid";
 import { postJSON } from "../api";
 
 const Dashboard = () => {
+  
   const [cropTips, setCropTips] = useState([]);
   const [marketPrices, setMarketPrices] = useState([]);
   const [schemes, setSchemes] = useState([]);
@@ -49,6 +50,8 @@ const Dashboard = () => {
       console.error("Market/Schemes error:", err);
     }
   };
+
+  
 
   // AI Crop Tips
   const getTips = async () => {
@@ -86,6 +89,7 @@ const Dashboard = () => {
 
   // Auth Check + Initial Data Load
   useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
     if (!isAuthenticated()) {
       toast.error("Please login first");
       navigate("/login");
@@ -96,6 +100,7 @@ const Dashboard = () => {
     fetchData();
     loadWeather();
   }, []);
+ 
 
   if (loadingWeather) {
     return (
@@ -104,6 +109,7 @@ const Dashboard = () => {
       </div>
     );
   }
+
 
   if (!weather) {
     return (

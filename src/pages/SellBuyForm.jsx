@@ -83,6 +83,10 @@ export default function SellBuyWizard() {
   }
 
   useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
+  }, []);
+
+  useEffect(() => {
     if (isEditing) {
       setLoading(true);
       // Fetch contract data and prefill form fields

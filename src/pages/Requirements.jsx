@@ -33,6 +33,10 @@ const RequirementDetails = () => {
     fetchLatest();
   }, [id]);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
+  }, []);
+
   if (!req) return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="text-center p-8">

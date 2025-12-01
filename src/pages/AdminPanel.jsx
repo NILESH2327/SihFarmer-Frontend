@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function AdminPanel() {
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
+  }, []);
   const [marketPrices, setMarketPrices] = useState([]);
   const [schemes, setSchemes] = useState([]);
 

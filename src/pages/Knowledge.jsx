@@ -3,6 +3,9 @@ import React, { useState, useEffect } from "react";
 const API_BASE = `${import.meta.env.VITE_API_BASE}/knowledge`;
 
 const Knowledge = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
+  }, []);
   const [search, setSearch] = useState("");
   const [results, setResults] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
