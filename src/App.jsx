@@ -45,6 +45,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import CropCalendar from "./components/CropCalendar";
 import UpdateScheme from './components/UpdateScheme';
 import { ModifyOrdersPage } from './pages/ModifyOrders';
+import ViewTools from './pages/ViewTools';
 
 function App() {
   const [isLogged, setIsLogged] = useState(false);
@@ -77,6 +78,7 @@ function App() {
                 <Route path="/farmer-profile" element={<FarmerProfile />} />
                 <Route path="/update-profile" element={<UpdateProfileForm />} />
                 <Route path="/knowledge" element={<Knowledge />} />
+                <Route path="/tools" element={<ViewTools />} />
 
                 {/* PLOTS */}
                 <Route path="/plot" element={<AllPlots />} />
@@ -119,7 +121,7 @@ function App() {
                 
 
                 {/* NEW GITHUB ROUTE */}
-                <Route path="/crop-calendar" element={<CropCalendar />} />
+                <Route path='/crop-calender' element={<CropCalendar/>}/>
                 {/* Fertilizer Guidance */}
                 <Route path="/fertilizer-guidance" element={<FertilizerGuidance />} />
 

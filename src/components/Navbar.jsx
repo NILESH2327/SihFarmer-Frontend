@@ -19,8 +19,8 @@ const Navbar = ({ isAuthenticated }) => {
     { path: "/dashboard", label: t("dashboard") },
     // { path: "/upload", label: t("upload") },
     { path: "/Activity", label: t("My Activity") },
-    { path: "/knowledge", label: "Knowledge Engine" },
-    {path: "/schemes", label: t("Schemes")},
+    // { path: "/knowledge", label: "Knowledge Engine" },
+    {path: "/tools", label: t("Tools")},
   ];
 
   const isActive = (path) => location.pathname === path;
