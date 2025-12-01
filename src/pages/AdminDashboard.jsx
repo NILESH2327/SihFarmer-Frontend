@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Plus, BadgeCheck } from "lucide-react";
-import { postJSON, getJSON } from "../api";
+import { Plus, BadgeCheck, Trash2 } from "lucide-react";
+import { postJSON, getJSON, deleteJSON } from "../api";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const AdminDashboard = () => {
   // form modal
@@ -29,7 +30,6 @@ const AdminDashboard = () => {
       setLoading(true);
 
       const query = { page, limit };
-
       const res = await getJSON("/schemes", query);
 
       setSchemes(res.results || []);
@@ -46,7 +46,30 @@ const AdminDashboard = () => {
     fetchSchemes();
   }, [page]);
 
-  // handle Add Scheme
+  // DELETE SCHEME
+  const deleteScheme = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this scheme?"
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      const res = await deleteJSON(`/schemes/${id}`);
+      console.log(res);
+      if (res.success) {
+        toast("Scheme deleted successfully!");
+        fetchSchemes(); // refresh list
+      } else {
+        toast("Failed to delete scheme.");
+      }
+    } catch (err) {
+      console.error(err);
+      toast("Error deleting scheme.");
+    }
+  };
+
+  // ADD SCHEME
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -101,44 +124,54 @@ const AdminDashboard = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
             {schemes.map((scheme) => (
-              <Link
-                to={`/admin/schemes/${scheme._id}`}
+              <div
                 key={scheme._id}
-                className="bg-white border border-gray-100 p-5 rounded-xl shadow-sm hover:shadow-md transition"
+                className="bg-white border border-gray-100 p-5 rounded-xl shadow-sm hover:shadow-md transition relative"
               >
-                <div className="flex items-center gap-2 mb-2">
-                  <BadgeCheck className="text-green-600" size={18} />
-                  <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
-                    {scheme.name}
-                  </h3>
-                </div>
+                <Link to={`/admin/schemes/${scheme._id}`}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <BadgeCheck className="text-green-600" size={18} />
+                    <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
+                      {scheme.name}
+                    </h3>
+                  </div>
 
-                <p className="text-sm text-gray-600 mb-1">
-                  <span className="font-semibold">Department:</span>{" "}
-                  {scheme.department}
-                </p>
-
-                {scheme.state && (
                   <p className="text-sm text-gray-600 mb-1">
-                    <span className="font-semibold">State:</span>{" "}
-                    {scheme.state}
+                    <span className="font-semibold">Department:</span>{" "}
+                    {scheme.department}
                   </p>
-                )}
 
-                <p className="text-sm text-gray-700 line-clamp-3">
-                  {scheme.description}
-                </p>
+                  {scheme.state && (
+                    <p className="text-sm text-gray-600 mb-1">
+                      <span className="font-semibold">State:</span>{" "}
+                      {scheme.state}
+                    </p>
+                  )}
 
-                {scheme.benefits && (
-                  <p className="text-sm text-green-700 font-medium mt-2">
-                    Benefit: {scheme.benefits}
+                  <p className="text-sm text-gray-700 line-clamp-3">
+                    {scheme.description}
                   </p>
-                )}
 
-                <button className="mt-4 w-full bg-green-600 text-white py-2 rounded-lg text-sm hover:bg-green-700 transition">
-                  Edit Scheme
+                  {scheme.benefits && (
+                    <p className="text-sm text-green-700 font-medium mt-2">
+                      Benefit: {scheme.benefits}
+                    </p>
+                  )}
+
+                  <button className="mt-4 w-full bg-green-600 text-white py-2 rounded-lg text-sm hover:bg-green-700 transition">
+                    Edit Scheme
+                  </button>
+                </Link>
+
+                {/* DELETE BUTTON */}
+                <button
+                  onClick={() => deleteScheme(scheme._id)}
+                  className="mt-3 w-full flex items-center justify-center gap-2 bg-red-600 text-white py-2 rounded-lg text-sm hover:bg-red-700 transition"
+                >
+                  <Trash2 size={16} />
+                  Delete Scheme
                 </button>
-              </Link>
+              </div>
             ))}
           </div>
         )}
@@ -168,7 +201,6 @@ const AdminDashboard = () => {
           </div>
         )}
       </main>
-
     </div>
   );
 };

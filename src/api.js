@@ -178,12 +178,49 @@ export async function getJSON(path, query = {}) {
  */
 export async function deleteJSON(path, params) {
   const token = await localStorage.getItem("token");
+  
 
   try {
     const res = await axios.delete(
-      `${API_BASE}${path}/${params.id}`,
+      `${API_BASE}${path}`,
       {
         headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        params:{
+          ...params
+        }
+
+      }
+    );
+
+    return res.data;
+  } catch (err) {
+    console.error("DELETE Error:", err);
+    throw (err.response?.data || err);
+  }
+}
+/**
+ * ============================
+ * 🔥 PUT JSON (Typed)
+ * ============================
+ */
+
+/**
+ * @param {string} path
+ * @param {BuyerSellerPayload} body
+ * @returns {Promise<ApiResponse>}
+ */
+export async function putJSON(path, body) {
+  try {
+    const token = await localStorage.getItem("token");
+
+    const res = await axios.put(
+      `${API_BASE}${path}`,
+      body,
+      {
+        headers: {
+          "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {})
         }
       }
@@ -191,7 +228,7 @@ export async function deleteJSON(path, params) {
 
     return res.data;
   } catch (err) {
-    console.error("DELETE Error:", err);
+    console.error("PUT Error:", err);
     throw (err.response?.data || err);
   }
 }

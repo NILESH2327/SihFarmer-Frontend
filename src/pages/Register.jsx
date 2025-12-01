@@ -1,114 +1,23 @@
-// import React, { useState } from "react";
-// import { Link } from "react-router-dom";
-// import { postJSON } from "../api";
-// import { onLogin } from "../lib/actions/authActions";
-
-// const Register = () => {
-//   const [form, setForm] = useState({ name: "", phone: "", password: "" });
-//     const handleChange = (e) =>
-//         setForm({ ...form, [e.target.name]: e.target.value });
-
-
-//   const onSubmit = async (e) => {
-//     e.preventDefault();
-//     console.log(form);
-//     const res = await postJSON('/auth/register', form );
-//     if(res.status===400){
-//       alert(res.message);
-//     }
-//     console.log(res.data);    
-//     alert('Sign Up Succesful');
-//     return window.location.replace('/login');
-//   }
-
-//   return (
-//     <div className="min-h-screen flex items-center justify-center bg-green-50 px-4">
-//       <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-
-//         <h2 className="text-3xl font-bold text-center text-green-700 mb-6">
-//           Create Your Account
-//         </h2>
-
-//         <form className="space-y-4" onChange={handleChange} onSubmit={onSubmit}>
-//           <div>
-//             <label className="block text-gray-700 font-semibold mb-1">Name</label>
-//             <input
-//               name="name"
-//               type="text"
-//               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-green-300"
-//               placeholder="Enter your name"
-//             />
-//           </div>
-
-//           <div>
-//             <label className="block text-gray-700 font-semibold mb-1">phone</label>
-//             <input
-//               type="phone"
-//               name="phone"
-//               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-green-300"
-//               placeholder="Enter your phone"
-//             />
-//           </div>
-
-//           <div>
-//             <label className="block text-gray-700 font-semibold mb-1">Password</label>
-//             <input
-//               type="password"
-//               name="password"
-//               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-green-300"
-//               placeholder="Enter your password"
-//             />
-//           </div>
-
-//           <p className="text-sm text-gray-500 text-center">
-//             Check your phone after registration.
-//           </p>
-
-//           <button className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition">
-//             Register
-//           </button>
-//         </form>
-
-//         <p className="text-center text-gray-600 mt-4">
-//           Already have an account?{" "}
-//           <Link to="/login" className="text-green-600 font-semibold hover:underline">
-//             Login
-//           </Link>
-//         </p>
-
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Register;
-
-
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { isAuthenticated } from "../lib/actions/authActions";
-import VerifyOtp from "./VerifyOtp";
 import GoogleAuth from "../components/GoogleAuth";
 
 const Register = () => {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    console.log(isAuthenticated());
-    if (isAuthenticated()) {
-      toast.error("Already Registered");
-      navigate('/dashboard')
-    }
-  }, [])
-
-  // State for form fields
   const [name, setName] = useState("");
   const [phone, setphone] = useState("");
   const [password, setPassword] = useState("");
 
-  // Handle register
+  useEffect(() => {
+    if (isAuthenticated()) {
+      toast.error("Already Registered");
+      navigate("/dashboard");
+    }
+  }, [navigate]);
+
   const handleRegister = async (e) => {
     e.preventDefault();
 
@@ -120,13 +29,12 @@ const Register = () => {
       });
 
       const data = await res.json();
-      console.log(data);
 
       if (data.success) {
-        toast.success(data.message); //success toast
+        toast.success(data.message);
         navigate("/verify-otp", { state: { phone } });
       } else {
-        toast.error(data.message); //error toast
+        toast.error(data.message);
       }
     } catch (error) {
       toast.error("Registration failed! Try again.");
@@ -134,21 +42,31 @@ const Register = () => {
   };
 
   return (
+    <div className="min-h-screen bg-green-50 flex items-center justify-center px-4 pb-10 pt-10">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md px-10 py-10 border border-green-100">
+        {/* Logo + Brand */}
+        <div className="flex flex-col items-center mb-6">
+          <div className="w-8 h-8 rounded-md bg-green-600 flex items-center justify-center text-white font-bold mb-2">
+            K
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900">Krishi Sakhi</h1>
+          <p className="text-sm text-gray-600 mt-2">
+            Create your account
+          </p>
+          <p className="text-xs text-gray-400">
+            Join to manage your agri activities
+          </p>
+        </div>
 
-
-    <div className="min-h-screen flex items-center justify-center bg-green-50 px-4">
-      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-
-        <h2 className="text-3xl font-bold text-center text-green-700 mb-6">
-          Create Your Account
-        </h2>
-
-        <form className="space-y-4" onSubmit={handleRegister}>
-          <div>
-            <label className="block text-gray-700 font-semibold mb-1">Name</label>
+        {/* Form */}
+        <form className="space-y-4 mt-2" onSubmit={handleRegister}>
+          <div className="space-y-1">
+            <label className="block text-sm font-medium text-gray-700">
+              Name
+            </label>
             <input
               type="text"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-green-300"
+              className="w-full px-3 py-2 rounded-lg border border-green-200 bg-green-50 focus:bg-white focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none text-sm"
               placeholder="Enter your name"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -156,11 +74,13 @@ const Register = () => {
             />
           </div>
 
-          <div>
-            <label className="block text-gray-700 font-semibold mb-1">phone</label>
+          <div className="space-y-1">
+            <label className="block text-sm font-medium text-gray-700">
+              Phone
+            </label>
             <input
-              type="phone"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-green-300"
+              type="tel"
+              className="w-full px-3 py-2 rounded-lg border border-green-200 bg-green-50 focus:bg-white focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none text-sm"
               placeholder="Enter your phone"
               value={phone}
               onChange={(e) => setphone(e.target.value)}
@@ -168,12 +88,14 @@ const Register = () => {
             />
           </div>
 
-          <div>
-            <label className="block text-gray-700 font-semibold mb-1">Password</label>
+          <div className="space-y-1">
+            <label className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
             <input
               type="password"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-green-300"
-              placeholder="Enter your password"
+              className="w-full px-3 py-2 rounded-lg border border-green-200 bg-green-50 focus:bg-white focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none text-sm"
+              placeholder="Create a password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -182,30 +104,38 @@ const Register = () => {
 
           <button
             type="submit"
-            className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition"
+            className="w-full mt-2 bg-green-600 text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-green-700 transition-colors"
           >
-            Register
+            Sign Up
           </button>
         </form>
 
-        <p className="text-center text-gray-600 mt-4">
+        {/* Divider */}
+        <div className="flex items-center my-5">
+          <div className="flex-1 h-px bg-green-100" />
+          <span className="px-3 text-xs text-gray-400 uppercase">
+            or
+          </span>
+          <div className="flex-1 h-px bg-green-100" />
+        </div>
+
+        {/* Google button */}
+        <div className="mb-1">
+          <GoogleAuth />
+        </div>
+
+        {/* Bottom link */}
+        <p className="text-xs text-center text-gray-500 mt-6">
           Already have an account?{" "}
-          <Link to="/login" className="text-green-600 font-semibold hover:underline">
+          <Link
+            to="/login"
+            className="text-green-600 font-medium hover:underline"
+          >
             Login
           </Link>
         </p>
-
-      
-
-        <GoogleAuth/>
-
       </div>
     </div>
-
-
-
-
-
   );
 };
 

@@ -218,7 +218,7 @@ export default function SchemeForm() {
     }
 
     toast.success("Scheme added Successfully");
-    navigate('/schemes')
+    navigate('/admin/dashboard')
     
 
    

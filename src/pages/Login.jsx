@@ -13,12 +13,11 @@ const Login = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    console.log(isAuthenticated());
     if (isAuthenticated()) {
-      toast.error("Already Registered");
-      navigate('/dashboard')
+      toast.error("Already Logged In");
+      navigate("/dashboard");
     }
-  }, [])
+  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -28,7 +27,6 @@ const Login = () => {
 
       if (data.success) {
         onLogin({ id: data.userId, token: data.token, isAdmin });
-
         toast.success(data.message);
 
         setTimeout(() => {
@@ -38,7 +36,6 @@ const Login = () => {
             window.location.href = "/dashboard";
           }
         }, 800);
-
       } else {
         toast.error(data.message);
       }
@@ -48,31 +45,46 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-green-50 px-4">
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-green-100">
+    <div className="min-h-screen bg-green-50 flex items-center justify-center px-4 pb-10 pt-10">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md px-10 py-10 border border-green-100">
+        {/* Logo + Brand */}
+        <div className="flex flex-col items-center mb-6">
+          {/* Replace with your logo if you have one */}
+          <div className="w-8 h-8 rounded-md bg-green-600 flex items-center justify-center text-white font-bold mb-2">
+            K
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900">Krishi Sakhi</h1>
+          <p className="text-sm text-gray-600 mt-2">
+            Sign in to your account
+          </p>
+          <p className="text-xs text-gray-400">
+            Welcome back! Please enter your details
+          </p>
+        </div>
 
-        <h2 className="text-3xl font-bold text-center text-green-700 mb-6">
-          Login
-        </h2>
-
-        <form className="space-y-5" onSubmit={handleLogin}>
-          <div>
-            <label className="block text-gray-700 mb-1">Phone</label>
+        {/* Form */}
+        <form className="space-y-4 mt-2" onSubmit={handleLogin}>
+          <div className="space-y-1">
+            <label className="block text-sm font-medium text-gray-700">
+              Phone
+            </label>
             <input
-              type="phone"
-              className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-green-400 outline-none"
-              placeholder="Enter your phone"
+              type="tel"
+              className="w-full px-3 py-2 rounded-lg border border-green-200 bg-green-50 focus:bg-white focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none text-sm"
+              placeholder="john@example.com"
               value={phone}
               onChange={(e) => setphone(e.target.value)}
               required
             />
           </div>
 
-          <div>
-            <label className="block text-gray-700 mb-1">Password</label>
+          <div className="space-y-1">
+            <label className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
             <input
               type="password"
-              className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-green-400 outline-none"
+              className="w-full px-3 py-2 rounded-lg border border-green-200 bg-green-50 focus:bg-white focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none text-sm"
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -80,36 +92,51 @@ const Login = () => {
             />
           </div>
 
-          {/* ADMIN CHECKBOX */}
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="admin"
-              checked={isAdmin}
-              onChange={() => setIsAdmin(!isAdmin)}
-              className="w-4 h-4 accent-green-600"
-            />
-            <label htmlFor="admin" className="text-gray-700">
-              Login as Admin
+          {/* Admin checkbox + optional forgot password */}
+          <div className="flex items-center justify-between text-sm">
+            <label className="inline-flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={isAdmin}
+                onChange={() => setIsAdmin(!isAdmin)}
+                className="w-4 h-4 rounded border-green-300 text-green-600 focus:ring-green-500"
+              />
+              <span className="text-gray-700">Login as Admin</span>
             </label>
           </div>
 
           <button
             type="submit"
-            className="w-full bg-green-600 text-white py-3 rounded-xl text-lg font-semibold hover:bg-green-700 transition-all"
+            className="w-full mt-2 bg-green-600 text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-green-700 transition-colors"
           >
-            Login
+            Sign In
           </button>
         </form>
 
-        <p className="text-sm text-center text-gray-600 mt-4">
-          New user?{" "}
-          <Link to="/register" className="text-green-600 font-semibold">
-            Register
+        {/* Divider */}
+        <div className="flex items-center my-5">
+          <div className="flex-1 h-px bg-green-100" />
+          <span className="px-3 text-xs text-gray-400 uppercase">
+            or
+          </span>
+          <div className="flex-1 h-px bg-green-100" />
+        </div>
+
+        {/* Google button */}
+        <div className="mb-1">
+          <GoogleAuth />
+        </div>
+
+        {/* Bottom link */}
+        <p className="text-xs text-center text-gray-500 mt-6">
+          Don&apos;t have an account?{" "}
+          <Link
+            to="/register"
+            className="text-green-600 font-medium hover:underline"
+          >
+            Sign Up
           </Link>
         </p>
-
-        <GoogleAuth />
       </div>
     </div>
   );

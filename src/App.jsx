@@ -39,6 +39,8 @@ import AdminDashboard from './pages/AdminDashboard';
 
 // NEW ROUTE FROM GITHUB
 import CropCalendar from "./components/CropCalendar";
+import UpdateScheme from './components/UpdateScheme';
+import { ModifyOrdersPage } from './pages/ModifyOrders';
 
 function App() {
   const [isLogged, setIsLogged] = useState(false);
@@ -101,11 +103,14 @@ function App() {
                 {/* MARKETPLACE */}
                 <Route path='/market-place' element={<CommodityMarketplace />} />
                 <Route path='/market-place/create-requirement' element={<SellBuyForm />} />
+                <Route path="/requirements/edit/:edit" element={<SellBuyForm />} />
                 <Route path="/requirements/:id" element={<RequirementDetails />} />
+                <Route path="/market/farmer" element={<ModifyOrdersPage />} />
 
                 {/* Admin Routes */}
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
                 <Route path="/admin/schemes/add" element={<SchemeForm />} />
+                <Route path="/admin/schemes/:schemeId" element={<UpdateScheme/>} />
                
                 
 

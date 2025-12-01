@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { getJSON, postJSON } from "../api";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function UpdateProfilePage() {
   const navigate = useNavigate();
@@ -128,8 +129,9 @@ export default function UpdateProfilePage() {
         navigate("/dashboard");
         window.scrollTo(0, 0);
       }
-    } catch {
+    } catch(err) {
       alert("Update failed!");
+      console.log(err)
     }
 
     setLoading(false);

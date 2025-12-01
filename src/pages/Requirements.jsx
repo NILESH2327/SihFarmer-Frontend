@@ -12,7 +12,7 @@ const DUMMY_IMAGES = [
 ];
 
 const RequirementDetails = () => {
-  const { id } = useParams();
+  const { id  } = useParams();
   const [req, setReq] = useState(null);
   const [latest, setLatest] = useState([]);
   const [showModal, setShowModal] = useState(false);

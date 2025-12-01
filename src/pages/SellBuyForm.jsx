@@ -1,6 +1,9 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import farm from "../assets/farm.png";
 import CloudinaryUploader from "../components/ImageUploader";
+import { getJSON, postJSON, putJSON } from "../api";
+import { toast } from "react-toastify";
+import { useNavigate, useParams } from "react-router-dom";
 
 /**
  * SellBuyWizard.jsx
@@ -22,6 +25,7 @@ export default function SellBuyWizard() {
   const todayISO = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
   const fileInputRef = useRef();
 
+
   // Step state
   const [step, setStep] = useState(1);
 
@@ -29,7 +33,7 @@ export default function SellBuyWizard() {
   const [type, setType] = useState("sell"); // buy | sell
   const [postingDate, setPostingDate] = useState(todayISO);
   const [title, setTitle] = useState("");
-   const [note, setNote] = useState("");
+  const [note, setNote] = useState("");
 
 
   const [priceAmount, setPriceAmount] = useState("");
@@ -55,6 +59,8 @@ export default function SellBuyWizard() {
 
   // Images array for product
   const [images, setImages] = useState([]); // { file, url }
+  const [Loading, setLoading] = useState(false)
+  const navigate = useNavigate();
 
   // small sample states->districts to demo dependent select
   const STATES = {
@@ -65,6 +71,49 @@ export default function SellBuyWizard() {
 
   // Validation errors
   const [errors, setErrors] = useState({});
+  const { edit } = useParams();
+  const isEditing = !!edit;
+
+  const fetchData = async () => {
+
+    const res = await getJSON(`/requirements/${edit}`);
+    console.log('Fetched requirement details:', res);
+    return res.data
+
+  }
+
+  useEffect(() => {
+    if (isEditing) {
+      setLoading(true);
+      // Fetch contract data and prefill form fields
+      fetchData()
+        .then((data) => {
+          // Example prefill - update as per your schema!
+          setType(data.type);
+          setPostingDate(data.postingDate);
+          setTitle(data.title);
+          setNote(data.note);
+          setPriceAmount(data.price.amount);
+          setPriceUnit(data.price.unit);
+          setQuantityAmount(data.quantity.amount);
+          setQuantityUnit(data.quantity.unit);
+          setProductName(data.product.name);
+          setProductVariety(data.product.variety);
+          setBuyingFrequency(data.product.buyingFrequency);
+          setStateVal(data.contractorInfo.state);
+          setContractorName(data.contractorInfo.name);
+          setContractorPhone(data.contractorInfo.phone);
+          setBusinessType(data.contractorInfo.businessType || "Farmer");
+          // If you want to prefill images, map URLs to the structure
+          setImages(data.images.map(url => ({ url })));
+        })
+        .catch(err => {
+          toast.error("Failed to load contract for editing.");
+        })
+
+      setLoading(false)
+    }
+  }, [isEditing, edit]);
 
   // Helpers
   // const addImages = (fileList) => {
@@ -164,6 +213,8 @@ export default function SellBuyWizard() {
 
     const payload = await buildPayload();
 
+
+
     // If you want to send files, use FormData
     const formData = new FormData();
     formData.append("payload", payload);
@@ -175,26 +226,27 @@ export default function SellBuyWizard() {
     // alert(JSON.stringify(payload, null, 2));
 
     try {
-      console.log("Submitting payload:", payload);
-      const res = await fetch("http://localhost:5000/api/requirements", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload), // ✅ Pure JSON
-      });
 
-
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text || "Failed to create contract");
+      let res;
+      if (isEditing) {
+        // Update
+        res = await putJSON(`/requirements/${edit}`, payload); // Use PATCH/PUT as your backend supports
+      } else {
+        res = await postJSON("/requirements", payload);
+      }
+      if (!res.success) {
+        throw new Error(res.message || "Failed to create contract");
       }
 
-      const data = await res.json();
-      // success
-      alert("Contract created successfully");
-      // reset form or redirect as needed
+      toast(res.message);
+      if (isEditing) {
+        navigate('/market/farmer');
+      } else {
+        navigate('/market-place');
+      }
       window.location.reload();
+
+
     } catch (err) {
       console.error(err);
 
@@ -204,6 +256,10 @@ export default function SellBuyWizard() {
 
   // Small UI helpers
   const stepProgress = Math.round(((step - 1) / 2) * 100);
+
+  if (Loading) return <div >
+    Loading...
+  </div>
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-start justify-center py-12 px-6">
@@ -255,7 +311,10 @@ export default function SellBuyWizard() {
           {/* Header / Stepper */}
           <div className="mb-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-gray-800">Create Contract</h2>
+              <h2 className="text-xl font-semibold text-gray-800">
+                {isEditing ? "Update Contract" : "Create Contract"}
+              </h2>
+
               <div className="text-sm text-gray-500">Step {step} of 3</div>
             </div>
 
@@ -427,7 +486,7 @@ export default function SellBuyWizard() {
             <div className={`${step === 2 ? "block" : "hidden"}`}>
               <div className="grid grid-cols-1 gap-4">
                 <div className="grid grid-cols-3 gap-3">
-                         <div className="col-span-3">
+                  <div className="col-span-3">
                     <label className="block text-sm font-medium text-gray-700">Note</label>
                     <textarea
                       type="number"
