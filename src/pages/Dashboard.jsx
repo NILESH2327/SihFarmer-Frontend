@@ -160,7 +160,7 @@ const Dashboard = () => {
           </div>
 
           {/* RIGHT SIDE */}
-          <div className="space-y-8">
+          <div className="space-y-8 mb-8">
             {/* TIPS */}
             <div className="bg-white rounded-2xl shadow-md border border-yellow-100 p-6">
               <h2 className="text-lg font-bold flex items-center text-gray-900">
