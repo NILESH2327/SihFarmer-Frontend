@@ -167,7 +167,14 @@ export default function FertilizerGuidance() {
 
   /* ------------------- UI ------------------- */
   return (
-    <div className="w-full flex justify-center py-10 px-4">
+    <div
+     className="w-full flex justify-center py-10 px-4 bg-cover bg-center bg-no-repeat"
+     style={{
+     backgroundImage:
+      "url('https://cdn.pixabay.com/photo/2021/09/18/02/27/vietnam-6634082_1280.jpg')",
+    }}
+    >
+    
       <div className="max-w-6xl w-full">
         <h1 className="text-3xl font-semibold text-center mb-8">
           {t("fertilizerGuideTitle")}

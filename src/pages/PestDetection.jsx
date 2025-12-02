@@ -112,8 +112,20 @@ const DetectPest = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div
+  className="min-h-screen bg-cover bg-center bg-no-repeat py-8 relative "
+  style={{
+    backgroundImage:
+      "url('https://cdn.pixabay.com/photo/2021/09/18/02/27/vietnam-6634082_1280.jpg')",
+  }}
+>
+  {/* Soft overlay for readability */}
+  <div className="absolute inset-0 bg-white/50 backdrop-blur-[3px]"></div>
+
+  {/* Page content wrapper */}
+  <div className="relative z-10">
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Title */}
         <div className="text-center mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
@@ -325,6 +337,7 @@ const DetectPest = () => {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };
