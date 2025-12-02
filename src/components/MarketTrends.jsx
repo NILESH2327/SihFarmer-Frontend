@@ -92,28 +92,42 @@ const MarketTrends = () => {
     };
 
     return (
-        <div className="p-4 md:p-8">
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-                    <TrendingUp className="text-green-600 w-7 h-7" />
-                    Market Prices Dashboard
-                </h2>
+         <div className="p-0">
 
-                <div className="flex gap-3">
-                    <button
-                        onClick={handlePrint}
-                        className="p-3 rounded-xl border shadow bg-white hover:bg-gray-50"
-                    >
-                        <Printer />
-                    </button>
-                    <button
-                        onClick={handleDownload}
-                        className="p-3 rounded-xl border shadow bg-white hover:bg-gray-50"
-                    >
-                        <Download />
-                    </button>
-                </div>
-            </div>
+          {/* TOP BACKGROUND SECTION */}
+        <div
+          className="bg-cover bg-center bg-no-repeat relative overflow-hidden w-full"
+          style={{
+          backgroundImage:
+            "url('https://cdn.pixabay.com/photo/2021/09/18/02/27/vietnam-6634082_1280.jpg')",
+         }}
+        >
+        {/* Blur overlay */}
+          <div className="flex justify-between items-center mb-4 relative z-10">
+               <h2 className="text-3xl font-bold text-white flex items-center gap-2">
+               <TrendingUp className="text-green-600 w-7 h-7" />
+                 Market Prices Dashboard
+           </h2>
+
+          <div className="flex gap-3">
+            <button
+                onClick={handlePrint}
+                className="p-3 rounded-xl border shadow bg-white/90 backdrop-blur-sm hover:bg-gray-50"
+            >
+                 <Printer />
+            </button>
+
+            <button
+                  onClick={handleDownload}
+                  className="p-3 rounded-xl border shadow bg-white/90 backdrop-blur-sm hover:bg-gray-50"
+            >
+                <Download />
+        </button>
+        </div>
+      </div>
+
+            <div className="max-w-7xl mx-auto p-4 md:p-8 relative z-10">
+             
 
             {/* FILTER BAR — EXACTLY LIKE YOUR SCREENSHOT */}
             <div className="bg-white shadow rounded-xl p-4 flex justify-between items-baseline-last mb-6 flex-wrap gap-4">
@@ -199,6 +213,8 @@ const MarketTrends = () => {
                     </button>
                 </div>
             </div>
+          </div>
+        </div>
 
             {/* Current Selection */}
             <div className="mt-6 text-gray-600">

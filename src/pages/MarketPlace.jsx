@@ -6,22 +6,38 @@ import { Link } from 'react-router-dom';
 
 // Header Component (unchanged)
 const Header = () => (
-  <header className="bg-white shadow-sm border-b sticky top-0 z-10">
-    <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+  <header 
+    className="bg-cover bg-center bg-no-repeat border-b shadow-sm"
+    style={{
+      backgroundImage:
+        "url('https://cdn.pixabay.com/photo/2021/09/18/02/27/vietnam-6634082_1280.jpg')",
+    }}
+  >
+    <div className="bg-white/60 ">
+      <div className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
       <div className="flex items-center gap-4 flex-1">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-          <input
-            type="text"
-            placeholder="Search Commodities"
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-          />
-        </div>
-      </div>
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+        <input
+        type="text"
+        placeholder="Search Commodities..."
+        className="
+        w-full pl-12 pr-4 py-3
+        bg-white shadow-lg border border-gray-300
+        rounded-xl text-gray-800 font-medium
+        placeholder-gray-500
+        focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600
+        transition-all
+        "
+      />
+   </div>
+  </div>
+ 
       <Link to={'create-requirement'} className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors">
         Sell / Buy
       </Link>
     </div>
+  </div>
   </header>
 );
 
@@ -217,14 +233,23 @@ const CommodityMarketplace = () => {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <div className="flex max-w-7xl mx-auto">
+      <div className="flex mx-auto">
+  
+      {/* LEFT side with background */}
+      <div
+         className="bg-cover bg-center bg-no-repeat"
+         style={{
+         backgroundImage:
+        "url('https://cdn.pixabay.com/photo/2021/09/18/02/27/vietnam-6634082_1280.jpg')",
+         }}
+      >
         <Sidebar
           filters={filters}
           onFilterChange={handleFilterChange}
           expandedCategories={expandedCategories}
           toggleCategory={toggleCategory}
         />
-
+ </div>
         <main className="flex-1 p-6">
           {/* Header with sorting and stats */}
           <div className="flex items-center justify-between mb-6">

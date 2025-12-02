@@ -1,5 +1,5 @@
 import React from "react";
-import { Microscope, Bug, BarChart, MapPin, CalendarDays } from "lucide-react";
+import { Microscope, Bug, BarChart, MapPin, CalendarDays, Sparkles, ScrollText, ShoppingCart, UserRound } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const FEATURES = [
@@ -51,9 +51,33 @@ const FEATURES = [
     title: "Nearby Agri Services",
     text: "Locate shops, labs and rentals.",
   },
+ {
+  to: "/schemes",
+  icon: <ScrollText className="h-8 w-8 text-amber-300" />, // or FileText, Landmark, BadgePercent
+  title: "Schemes",
+  text: "Browse government support programs.",
+},
+{
+  to: "/knowledge-engine",
+  icon: <Sparkles className="h-8 w-8 text-emerald-300" />, // or Brain, Bot, Lightbulb
+  title: "Knowledge Engine",
+  text: "Ask agronomy questions and get answers.",
+},
+ {
+    to: "/orders",
+    icon: <ShoppingCart className="h-8 w-8 text-emerald-300" />,
+    title: "Create / Buy / Sell",
+    text: "Create listings and manage buy/sell orders.",
+  },
+  {
+    to: "/farmer-profile",
+    icon: <UserRound className="h-8 w-8 text-teal-200" />,
+    title: "Update Profile",
+    text: "Edit your farm, crop and contact details.",
+  },
 ];
 
-const Grid = () => {
+const ViewTools= () => {
   return (
     <section className="w-full bg-emerald-950 text-white py-10 shadow-sm border border-emerald-900">
       {/* Title */}
@@ -91,15 +115,10 @@ const Grid = () => {
 
       {/* Bottom CTA */}
       <div className="mt-10 flex justify-center">
-        <Link
-          to="/tools"
-          className="px-6 py-2 rounded-full border border-emerald-300 text-sm font-semibold text-emerald-50 hover:bg-emerald-500/10 transition-colors"
-        >
-          View All Tools
-        </Link>
+     
       </div>
     </section>
   );
 };
 
-export default Grid;
+export default ViewTools;

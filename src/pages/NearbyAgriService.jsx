@@ -108,11 +108,24 @@ export default function NearbyAgriServices() {
   ];
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold text-green-700 mb-3">
+  <div
+  className="relative w-full flex justify-center py-10 px-4">
+   <div
+    className="absolute inset-0 bg-cover bg-center bg-no-repeat blur-sm opacity-90"
+    style={{
+      backgroundImage:
+        "url('https://cdn.pixabay.com/photo/2021/09/18/02/27/vietnam-6634082_1280.jpg')",
+    }}
+  ></div>
+  
+
+  {/* CONTENT (stays sharp & visible) */}
+  <div className="relative z-10 max-w-6xl w-full">
+
+     <h1 className="text-3xl font-bold text-black-700 mb-3">
         Nearby Agri Services 🌍
       </h1>
-      <p className="text-gray-600 mb-6">
+      <p className="text-blCK-600 mb-6">
         Find shops, labs, and rentals near your current location.
       </p>
 
@@ -227,11 +240,14 @@ export default function NearbyAgriServices() {
         ))}
 
         {!loading && filtered.length === 0 && (
-          <p className="text-center text-gray-500 mt-10">
+          <p className="text-center text-BLACK-500 mt-10">
             No services found in this range.
           </p>
         )}
       </div>
     </div>
+  </div>
+  
+
   );
 }
