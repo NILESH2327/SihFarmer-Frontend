@@ -50,7 +50,7 @@ const HomePage = () => {
               className="inline-flex items-center px-10 py-4 bg-green-500 text-white text-lg font-semibold rounded-xl
               hover:bg-green-600 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
             >
-              {t('getStarted')}
+              {t('GetStarted')}
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
 
