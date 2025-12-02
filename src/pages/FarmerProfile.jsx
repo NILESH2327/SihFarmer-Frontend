@@ -44,6 +44,9 @@ function renderLocation(location) {
 
 export default function FarmerProfile() {
   const [lang, setLang] = useState("en-IN");
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
+  }, []);
 
   const defaultProfile = {
     name: "",

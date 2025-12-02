@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const TwilioInvite = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
+  }, []);
   return (
     <div className="min-h-screen flex items-center justify-center  px-4" style={{ backgroundImage: "url('/bg5.jpg')" }}>
       <div className="bg-white mt-10 mb-10 px-10 py-10 rounded-2xl shadow-2xl w-full max-w-lg border border-green-200 flex flex-col items-center text-center">

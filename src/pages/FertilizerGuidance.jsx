@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import fertilizerData from "../data/fertilizerData";
 import { useLanguage } from "../contexts/LanguageContext";
 import { jsPDF } from "jspdf";
@@ -23,6 +23,9 @@ async function fetchFontAsBase64(url) {
 }
 
 export default function FertilizerGuidance() {
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
+  }, []);
   const { language } = useLanguage();
   const lang = language === "ml" ? "ml" : "en";
 

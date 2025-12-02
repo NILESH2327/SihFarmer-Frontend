@@ -127,6 +127,9 @@ const Sidebar = ({
 
 // Main App Component with Full Filter Integration
 const CommodityMarketplace = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
+  }, []);
   const [filters, setFilters] = useState({
     type: 'buy', // default to buyers
     product: '',

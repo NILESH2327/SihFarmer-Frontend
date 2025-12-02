@@ -5,6 +5,9 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const AdminDashboard = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
+  }, []);
   // form modal
   const [openModal, setOpenModal] = useState(false);
   const [form, setForm] = useState({

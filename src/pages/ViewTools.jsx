@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Microscope, Bug, BarChart, MapPin, CalendarDays, Sparkles, ScrollText, ShoppingCart, UserRound } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -64,7 +64,7 @@ const FEATURES = [
   text: "Ask agronomy questions and get answers.",
 },
  {
-    to: "/orders",
+    to: "/market-place/create-requirement",
     icon: <ShoppingCart className="h-8 w-8 text-emerald-300" />,
     title: "Create / Buy / Sell",
     text: "Create listings and manage buy/sell orders.",
@@ -77,7 +77,11 @@ const FEATURES = [
   },
 ];
 
+
 const ViewTools= () => {
+    useEffect(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
+      }, []);
   return (
     <section className="w-full bg-emerald-950 text-white py-10 shadow-sm border border-emerald-900">
       {/* Title */}

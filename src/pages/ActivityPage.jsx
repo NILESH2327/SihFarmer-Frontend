@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function ActivityPage() {
   const [activity, setActivity] = useState({
@@ -6,6 +6,11 @@ export default function ActivityPage() {
     description: "",
     date: "",
   });
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
+  }, []);
+
 
   const [logs, setLogs] = useState([]);
 

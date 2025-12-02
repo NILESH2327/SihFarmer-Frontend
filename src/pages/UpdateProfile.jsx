@@ -16,6 +16,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export default function UpdateProfilePage() {
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
+  }, []);
   const navigate = useNavigate();
   const [profile, setProfile] = useState({
     name: "",

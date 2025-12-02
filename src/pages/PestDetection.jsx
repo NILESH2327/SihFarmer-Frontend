@@ -92,6 +92,10 @@ const DetectPest = () => {
     }
   };
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
+  }, []);
+
   return (
   <div
   className="min-h-screen bg-cover bg-center bg-no-repeat py-8 relative "

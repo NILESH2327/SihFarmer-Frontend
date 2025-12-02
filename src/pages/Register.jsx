@@ -41,6 +41,11 @@ const Register = () => {
     }
   };
 
+  useEffect
+  (() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
+  }, []);
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4 pb-10 pt-10"  style={{ backgroundImage: "url('/bg3.jpg')" }}>
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md px-10 py-10 border border-green-100">

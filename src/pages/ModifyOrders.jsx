@@ -214,6 +214,10 @@ export const ModifyOrdersPage = () => {
     }, []);
 
     useEffect(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
+    }, []);
+
+    useEffect(() => {
         fetchData();
     }, [])
 
@@ -241,7 +245,7 @@ export const ModifyOrdersPage = () => {
         onCancel(id);
     };
 
-    const onDelete = async(id) => {
+    const onDelete = async (id) => {
 
         const confirmDelete = window.confirm(
             "Are you sure you want to delete this contract?"
@@ -264,8 +268,8 @@ export const ModifyOrdersPage = () => {
         }
 
 
-       
-      
+
+
     };
 
     return (

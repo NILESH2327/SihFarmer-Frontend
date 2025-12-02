@@ -78,7 +78,7 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/farmer-profile" element={<FarmerProfile />} />
                 <Route path="/update-profile" element={<UpdateProfileForm />} />
-                <Route path="/knowledge" element={<Knowledge />} />
+                <Route path="/knowledge-engine" element={<Knowledge />} />
                 <Route path="/tools" element={<ViewTools />} />
 
                 {/* PLOTS */}
@@ -142,6 +142,7 @@ function App() {
 
               </Routes>
             </main>
+            
 
             <Footer />
           </div>
