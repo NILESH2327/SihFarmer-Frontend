@@ -1,78 +1,92 @@
 import React, { useEffect } from "react";
-import { Microscope, Bug, BarChart, MapPin, CalendarDays, Sparkles, ScrollText, ShoppingCart, UserRound, PlusCircle } from "lucide-react";
 import { Link } from "react-router-dom";
-const FEATURES = [
+import {
+  Microscope,
+  Bug,
+  BarChart,
+  MapPin,
+  CalendarDays,
+  Sparkles,
+  ScrollText,
+  ShoppingCart,
+  UserRound,
+  Sprout,
+  PlusCircle,
+} from "lucide-react";
+import { useLanguage } from "../contexts/LanguageContext";
+
+const FEATURES = (t) => [
   {
     to: "/upload",
     icon: <Microscope className="h-8 w-8 text-emerald-300" />,
-    title: "Detect Crop Disease",
-    text: "Upload crop images and get instant diagnosis.",
+    titleKey: "features.detectCrop.title",
+    textKey: "features.detectCrop.text",
   },
   {
     to: "/pest-detection",
     icon: <Bug className="h-8 w-8 text-lime-300" />,
-    title: "Pest Detection",
-    text: "Identify harmful pests from crop images.",
+    titleKey: "features.pestDetection.title",
+    textKey: "features.pestDetection.text",
   },
   {
     to: "/market-trends",
     icon: <BarChart className="h-8 w-8 text-amber-300" />,
-    title: "Market Trends",
-    text: "View commodity prices and trends.",
+    titleKey: "features.marketTrends.title",
+    textKey: "features.marketTrends.text",
   },
   {
     to: "/market-place",
     icon: <MapPin className="h-8 w-8 text-teal-300" />,
-    title: "Nearest Marketplace",
-    text: "Find buyers and sellers near you.",
+    titleKey: "features.nearestMarketplace.title",
+    textKey: "features.nearestMarketplace.text",
   },
   {
     to: "/soil-scanner",
     icon: <Microscope className="h-8 w-8 text-green-200" />,
-    title: "Soil Health Scanner",
-    text: "Analyze soil nutrients using AI.",
+    titleKey: "features.soilScanner.title",
+    textKey: "features.soilScanner.text",
   },
   {
     to: "/fertilizer-guidance",
     icon: <Microscope className="h-8 w-8 text-emerald-200" />,
-    title: "Fertilizer Guidance",
-    text: "Get smart fertilizer recommendations.",
+    titleKey: "features.fertilizerGuidance.title",
+    textKey: "features.fertilizerGuidance.text",
   },
   {
     to: "/crop-calender",
     icon: <CalendarDays className="h-8 w-8 text-lime-200" />,
-    title: "Smart Crop Calendar",
-    text: "Plan sowing and harvesting schedules.",
+    titleKey: "features.cropCalendar.title",
+    textKey: "features.cropCalendar.text",
   },
   {
     to: "/nearby-service",
     icon: <MapPin className="h-8 w-8 text-teal-200" />,
-    title: "Nearby Agri Services",
-    text: "Locate shops, labs and rentals.",
+    titleKey: "features.nearbyServices.title",
+    textKey: "features.nearbyServices.text",
   },
   {
     to: "/schemes",
     icon: <ScrollText className="h-8 w-8 text-amber-300" />,
-    title: "Schemes",
-    text: "Browse government support programs.",
+    titleKey: "features.schemes.title",
+    textKey: "features.schemes.text",
   },
   {
     to: "/knowledge-engine",
     icon: <Sparkles className="h-8 w-8 text-emerald-300" />,
-    title: "Knowledge Engine",
-    text: "Ask agronomy questions and get answers.",
+    titleKey: "features.knowledgeEngine.title",
+    textKey: "features.knowledgeEngine.text",
   },
   {
     to: "/market-place/create-requirement",
     icon: <ShoppingCart className="h-8 w-8 text-emerald-300" />,
-    title: "Create / Buy / Sell",
-    text: "Create listings and manage buy/sell orders.",
+    titleKey: "features.createBuySell.title",
+    textKey: "features.createBuySell.text",
   },
   {
     to: "/farmer-profile",
     icon: <UserRound className="h-8 w-8 text-teal-200" />,
-    title: "Update Profile",
-    text: "Edit your farm, crop and contact details.",
+    titleKey: "features.updateProfile.title",
+    textKey: "features.updateProfile.text",
   },
   // New entries added here
   {
@@ -89,27 +103,31 @@ const FEATURES = [
   },
 ];
 
+const ViewTools = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, []);
+
+  const { t } = useLanguage();
+  const features = FEATURES(t);
 
 
-const ViewTools= () => {
-    useEffect(() => {
-        window.scrollTo({ top: 0, left: 0, behavior: "instant" }); // or "smooth"
-      }, []);
+
   return (
     <section className="w-full bg-emerald-950 text-white py-10 shadow-sm border border-emerald-900">
       {/* Title */}
       <div className="text-center mb-8">
         <h2 className="text-2xl font-semibold tracking-wide text-emerald-50">
-          TOOLS &amp; SERVICES
+          {t("tools.title")}
         </h2>
         <p className="mt-2 text-sm text-emerald-200/80">
-          Explore different tools to support your farming decisions.
+          {t("tools.subtitle")}
         </p>
       </div>
 
       {/* Icon grid */}
       <div className="max-w-5xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8">
-        {FEATURES.map((item) => (
+        {features.map((item) => (
           <Link
             key={item.to}
             to={item.to}
@@ -118,21 +136,22 @@ const ViewTools= () => {
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-900 border border-emerald-700 group-hover:border-emerald-300 transition-colors">
               {item.icon}
             </div>
+
             <div>
               <h3 className="text-sm font-semibold text-emerald-50 group-hover:text-emerald-200 transition-colors">
-                {item.title}
+                {t(item.titleKey)}
               </h3>
               <p className="mt-1 text-[11px] text-emerald-200/80 leading-snug">
-                {item.text}
+                {t(item.textKey)}
               </p>
             </div>
           </Link>
         ))}
       </div>
 
-      {/* Bottom CTA */}
+      {/* Bottom CTA (optional) */}
       <div className="mt-10 flex justify-center">
-     
+        {/* If you want a CTA later, use t('tools.cta') */}
       </div>
     </section>
   );

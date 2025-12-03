@@ -40,6 +40,7 @@ import SellBuyForm from './pages/SellBuyForm';
 import SchemeForm from './pages/AddScheme';
 import SchemeDetailPage from './pages/SchemePage';
 import AdminDashboard from './pages/AdminDashboard';
+import PesticideRestrictionChecker from './pages/PesticideRestrictionChecker';
 
 // NEW ROUTE FROM GITHUB
 import CropCalendar from "./components/CropCalendar";
@@ -133,6 +134,10 @@ function App() {
                 <Route path="/nearby-service" element={<NearbyAgriServices />} />
                 <Route path='/chatbot' element={<Chatbot/>}/>
                 
+
+
+                <Route path="/pestisides-scanner" element={<PesticideRestrictionChecker />} />
+
 
 
 

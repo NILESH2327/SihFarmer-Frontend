@@ -1,16 +1,37 @@
 // Chatbot.jsx
+import React, { useState, useRef, useEffect } from "react";
+import { Send, Bot, User } from "lucide-react";
+import { useLanguage } from "../contexts/LanguageContext";
+import { getBotResponse } from "../lib/actions/chatbot";
+import AudioRecorder from "../components/AudioRecorder";
+
 const Chatbot = () => {
-  const chats = [
-    "Onboard a new farmer profile",
-    "Log today’s field activities",
-    "Check pest alerts for my paddy",
-    "View rainfall and weather outlook",
-    "Get scheme eligibility guidance",
-    "Review last season’s yield notes",
-    "Set reminders for irrigation",
-    "Track input usage and costs",
-    "Ask a doubt in Malayalam",
-  ];
+  const { t, language } = useLanguage();
+
+  const [messages, setMessages] = useState([
+    {
+      id: "1",
+      text:
+        language === "en"
+          ? "Hello! I'm your AI farming assistant. Ask anything about crops, weather, or Kerala farming."
+          : "ഹലോ! ഞാൻ നിങ്ങളുടെ AI കൃഷി സഹായിയാണ്. കേരളത്തിലെ കൃഷി, കാലാവസ്ഥ, രോഗങ്ങൾ എന്നിവയെക്കുറിച്ച് എന്തും ചോദിക്കൂ.",
+      sender: "bot",
+      timestamp: new Date(),
+      templateId: 1,
+      answer:
+        language === "en"
+          ? "Hello! I'm your AI farming assistant. Ask anything about crops, weather, or Kerala farming."
+          : "ഹലോ! ഞാൻ നിങ്ങളുടെ AI കൃഷി സഹായിയാണ്. കേരളത്തിലെ കൃഷി, കാലാവസ്ഥ, രോഗങ്ങൾ എന്നിവയെക്കുറിച്ച് എന്തും ചോദിക്കൂ.",
+      steps: [],
+    },
+  ]);
+  const [input, setInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const [hasAskedQuestion, setHasAskedQuestion] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const messagesEndRef = useRef(null);
+  const audioRef = useRef(null);
 
   const suggestions = [
     "Help me profile a new farmer for Krishi Sakhi",
@@ -19,32 +40,138 @@ const Chatbot = () => {
     "Are there any pest outbreaks reported near my village?",
   ];
 
-  const coreFeatures = [
-    {
-      title: "Understands each farm",
-      desc: "Capture location, crops, soil, and irrigation once—Krishi Sakhi remembers it for every future conversation.",
-    },
-    {
-      title: "Talk naturally in Malayalam",
-      desc: "Speak or type in Malayalam or English. Krishi Sakhi adapts to how farmers actually talk.",
-    },
-    {
-      title: "Simple activity logging",
-      desc: "Record sowing, irrigation, input use, or pest issues in one line instead of long forms.",
-    },
-    {
-      title: "Contextual AI advisory",
-      desc: "Get guidance tuned to crop, weather, and nearby outbreaks—not generic district-level tips.",
-    },
-    {
-      title: "Smart nudges and alerts",
-      desc: "Timely reminders for operations, scheme dates, and price trends—delivered before it is too late.",
-    },
-    {
-      title: "Local knowledge engine",
-      desc: "Powered by crop calendars, pest data, and best practices tuned for Kerala’s conditions.",
-    },
+  const quickQuestions = [
+    "Best time to plant rice in Kerala?",
+    "How to prevent coconut diseases?",
+    "Current weather suitable for planting?",
+    "Organic fertilizer recommendations",
   ];
+
+  // Scroll to latest message
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  // Audio play / stop
+  const playBotAudio = (base64audio) => {
+    try {
+      if (!base64audio) return;
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+
+      const audioBlob = new Blob(
+        [Uint8Array.from(atob(base64audio), (c) => c.charCodeAt(0))],
+        { type: "audio/mp3" }
+      );
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+      audioRef.current = audio;
+      audio.onended = () => setIsPlaying(false);
+      audio.play();
+      setIsPlaying(true);
+    } catch (err) {
+      console.error("Audio playback error:", err);
+    }
+  };
+
+  const stopAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setIsPlaying(false);
+    }
+  };
+
+  const handleSend = async (textFromBtn) => {
+    const content = (textFromBtn ?? input).trim();
+    if (!content) return;
+
+    const userMessage = {
+      id: Date.now().toString(),
+      text: content,
+      sender: "user",
+      timestamp: new Date(),
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setInput("");
+    setIsTyping(true);
+    if (!hasAskedQuestion) setHasAskedQuestion(true);
+
+    try {
+      const botText = await getBotResponse(content);
+      let botResponseData;
+      try {
+        // If your API already returns { answer, templateId, steps, audioBase64 }
+        botResponseData = botText;
+      } catch {
+        botResponseData = { answer: botText, templateId: 1, steps: [] };
+      }
+
+      const botMessage = {
+        id: (Date.now() + 1).toString(),
+        sender: "bot",
+        timestamp: new Date(),
+        ...botResponseData,
+      };
+
+      if (botResponseData.audioBase64) {
+        playBotAudio(botResponseData.audioBase64);
+      }
+
+      setMessages((prev) => [...prev, botMessage]);
+    } catch (error) {
+      console.error("Error getting bot response:", error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: (Date.now() + 1).toString(),
+          sender: "bot",
+          timestamp: new Date(),
+          answer: "Sorry, something went wrong. Please try again later.",
+          templateId: 1,
+          steps: [],
+        },
+      ]);
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleSend();
+  };
+
+  const startNewConversation = () => {
+    setMessages([
+      {
+        id: "1",
+        text:
+          language === "en"
+            ? "New chat started. Tell me about your field or question."
+            : "പുതിയ സംഭാഷണം ആരംഭിച്ചു. നിങ്ങളുടെ വയലിനെക്കുറിച്ചോ സംശയത്തെക്കുറിച്ചോ പറയൂ.",
+        sender: "bot",
+        timestamp: new Date(),
+        templateId: 1,
+        answer:
+          language === "en"
+            ? "New chat started. Tell me about your field or question."
+            : "പുതിയ സംഭാഷണം ആരംഭിച്ചു. നിങ്ങളുടെ വയലിനെക്കുറിച്ചോ സംശയത്തെക്കുറിച്ചോ പറയൂ.",
+        steps: [],
+      },
+    ]);
+    setInput("");
+    setHasAskedQuestion(false);
+  };
 
   return (
     <div className="min-h-screen bg-emerald-50 text-slate-900 flex">
@@ -59,7 +186,10 @@ const Chatbot = () => {
           </p>
         </div>
 
-        <button className="mx-4 my-2 flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-500 text-white hover:bg-emerald-600 text-sm shadow-sm">
+        <button
+          className="mx-4 my-2 flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-500 text-white hover:bg-emerald-600 text-sm shadow-sm"
+          onClick={startNewConversation}
+        >
           <span className="text-lg leading-none">＋</span>
           <span>New conversation</span>
         </button>
@@ -68,11 +198,13 @@ const Chatbot = () => {
           Recent sessions
         </div>
 
+        {/* simple static list for now */}
         <nav className="mt-1 flex-1 overflow-y-auto text-sm space-y-1 px-2 pb-4">
-          {chats.map((item) => (
+          {suggestions.map((item) => (
             <button
               key={item}
-              className="w-full text-left px-2.5 py-2 rounded-lg hover:bg-emerald-100/80 text-emerald-900"
+              className="w-full text-left px-2.5 py-2 rounded-lg hover:bg-emerald-100/80 text-emerald-900 text-xs"
+              onClick={() => handleSend(item)}
             >
               {item}
             </button>
@@ -82,7 +214,7 @@ const Chatbot = () => {
         <div className="px-4 py-4 mt-auto bg-transparent">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-xs font-bold text-white">
-              MG
+              KS
             </div>
             <div className="flex flex-col">
               <span className="text-xs font-semibold text-emerald-900">
@@ -93,17 +225,14 @@ const Chatbot = () => {
               </span>
             </div>
           </div>
-          <button className="text-[11px] px-3 py-1.5 rounded-full border border-emerald-400 text-emerald-700 bg-white/70 hover:bg-emerald-50">
-            View scheme status
-          </button>
         </div>
       </aside>
 
       {/* Main content */}
       <main className="flex-1 flex flex-col bg-gradient-to-br from-emerald-50 via-white to-emerald-100">
-        <section className="flex-1 flex flex-col items-center justify-center w-full max-w-5xl mx-auto px-6 py-10 space-y-10">
+        <section className="flex-1 flex flex-col w-full max-w-5xl mx-auto px-6 py-6 space-y-6">
           {/* Hero */}
-          <div className="text-center max-w-3xl space-y-3">
+          <div className="text-center max-w-3xl mx-auto space-y-3">
             <p className="text-xs font-medium text-emerald-700 tracking-wide uppercase">
               AI-powered farming companion
             </p>
@@ -117,27 +246,8 @@ const Chatbot = () => {
             </p>
           </div>
 
-          {/* Input */}
-          <div className="w-full max-w-2xl space-y-2">
-            <div className="rounded-2xl bg-white/90 border border-emerald-100 flex items-center px-4 py-3 gap-3 shadow-sm">
-              <span className="text-lg text-emerald-500">🌾</span>
-              <input
-                type="text"
-                placeholder="Ask Krishi Sakhi: “What should I do in my paddy field this week?”"
-                className="flex-1 bg-transparent outline-none text-sm md:text-[15px] text-emerald-900 placeholder:text-emerald-400"
-              />
-              <button className="hidden sm:flex w-9 h-9 rounded-full items-center justify-center text-emerald-600 hover:bg-emerald-50 border border-emerald-200">
-                <span className="w-3 h-3 rounded-full border-2 border-emerald-500" />
-              </button>
-            </div>
-            <p className="text-[11px] text-emerald-700">
-              Type or speak in Malayalam or English. Krishi Sakhi understands
-              both.
-            </p>
-          </div>
-
-          {/* Suggestions */}
-          <div className="w-full max-w-3xl space-y-3">
+          {/* Suggestions row */}
+          <div className="w-full max-w-3xl mx-auto space-y-3">
             <p className="text-sm text-emerald-800">
               Use these prompts to get started:
             </p>
@@ -145,6 +255,8 @@ const Chatbot = () => {
               {suggestions.map((text) => (
                 <button
                   key={text}
+                  type="button"
+                  onClick={() => handleSend(text)}
                   className="flex items-start gap-3 px-3 py-3 rounded-2xl bg-white/80 hover:bg-emerald-50 border border-emerald-100 text-left shadow-sm"
                 >
                   <div className="mt-0.5 w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-xs text-emerald-600">
@@ -158,44 +270,158 @@ const Chatbot = () => {
             </div>
           </div>
 
-          {/* Features – airy cards */}
-          <div className="w-full max-w-5xl space-y-3">
-            <p className="text-sm font-semibold text-emerald-900">
-              What Krishi Sakhi learns and does:
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {coreFeatures.map((f) => (
+          {/* Chat window */}
+          <div className="w-full max-w-3xl mx-auto border border-emerald-100 rounded-2xl bg-white/80 p-3 text-sm max-h-80 overflow-y-auto">
+            {messages.map((msg) => (
+              <div
+                key={msg.id}
+                className={`mb-2 flex ${
+                  msg.sender === "user" ? "justify-end" : "justify-start"
+                }`}
+              >
                 <div
-                  key={f.title}
-                  className="rounded-2xl bg-white/70 border border-emerald-100 px-4 py-3 text-left"
+                  className={`flex items-start space-x-2 max-w-[80%] ${
+                    msg.sender === "user"
+                      ? "flex-row-reverse space-x-reverse"
+                      : ""
+                  }`}
                 >
-                  <h3 className="text-xs font-semibold text-emerald-900 mb-1">
-                    {f.title}
-                  </h3>
-                  <p className="text-[11px] text-emerald-800 leading-relaxed">
-                    {f.desc}
-                  </p>
+                  <div
+                    className={`p-2 rounded-full ${
+                      msg.sender === "user" ? "bg-green-600" : "bg-blue-600"
+                    }`}
+                  >
+                    {msg.sender === "user" ? (
+                      <User className="h-4 w-4 text-white" />
+                    ) : (
+                      <Bot className="h-4 w-4 text-white" />
+                    )}
+                  </div>
+
+                  <div
+                    className={`p-2 rounded-lg text-xs ${
+                      msg.sender === "user"
+                        ? "bg-green-600 text-white"
+                        : "bg-gray-100 text-gray-900"
+                    }`}
+                  >
+                    {msg.sender === "bot" && msg.templateId === 2 ? (
+                      <div>
+                        <p>{msg.answer}</p>
+                        <ol className="list-decimal list-inside mt-1 text-xs text-gray-700">
+                          {msg.steps.map((step, idx) => (
+                            <li key={idx} className="text-black">
+                              {step.replace("**", "")}
+                            </li>
+                          ))}
+                        </ol>
+                      </div>
+                    ) : (
+                      <p>{msg.answer || msg.text}</p>
+                    )}
+                    <p
+                      className={`mt-1 text-[10px] ${
+                        msg.sender === "user"
+                          ? "text-green-100"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      {msg.timestamp.toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                  </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
+
+            {isTyping && (
+              <div className="flex justify-start">
+                <div className="flex items-center space-x-2">
+                  <div className="p-2 rounded-full bg-blue-600">
+                    <Bot className="h-4 w-4 text-white" />
+                  </div>
+                  <div className="p-2 rounded-lg bg-gray-100">
+                    <div className="flex space-x-1">
+                      <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
+                      <div
+                        className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
+                        style={{ animationDelay: "0.1s" }}
+                      ></div>
+                      <div
+                        className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
+                        style={{ animationDelay: "0.2s" }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div ref={messagesEndRef} />
           </div>
 
-          {/* Impact strip */}
-          <div className="w-full max-w-3xl">
-            <div className="rounded-2xl bg-emerald-50/80 border border-emerald-100 px-4 py-3 text-[11px] text-emerald-800">
-              <p className="font-semibold mb-1 text-emerald-900">
-                Expected impact
+          {/* Quick questions strip */}
+          {!hasAskedQuestion && (
+            <div className="w-full max-w-3xl mx-auto border border-emerald-100 rounded-2xl bg-emerald-50/80 px-3 py-2">
+              <p className="text-[11px] font-medium text-emerald-900 mb-1">
+                Quick questions
               </p>
-              <div className="space-y-1">
-                <p>• Always-available, contextual support for smallholder farmers.</p>
-                <p>• Better timing of field operations and input use across seasons.</p>
-                <p>
-                  • Bridges knowledge gaps using AI plus local data; rollout and
-                  funding depend on government sanction.
-                </p>
+              <div className="flex flex-wrap gap-1.5">
+                {quickQuestions.map((q, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setInput(q)}
+                    className="px-2 py-1 bg-white border border-emerald-100 rounded-full text-[10px] text-emerald-700 hover:bg-emerald-50"
+                  >
+                    {q}
+                  </button>
+                ))}
               </div>
             </div>
-          </div>
+          )}
+
+          {/* Input bar */}
+          <form
+            onSubmit={handleSubmit}
+            className="w-full max-w-3xl mx-auto rounded-2xl bg-white/90 border border-emerald-100 flex items-center px-4 py-2 gap-2 shadow-sm"
+          >
+            <span className="text-lg text-emerald-500">🌾</span>
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSubmit(e)}
+              placeholder={
+                language === "en"
+                  ? "Ask your farming question..."
+                  : "നിങ്ങളുടെ കൃഷി ചോദ്യം ചോദിക്കുക..."
+              }
+              className="flex-1 px-2 py-2 bg-transparent outline-none text-sm text-emerald-900 placeholder:text-emerald-400"
+            />
+
+            <AudioRecorder setMessage={setInput} setProcessing={setIsTyping} />
+
+            {isPlaying && (
+              <button
+                type="button"
+                onClick={stopAudio}
+                className="px-2 py-2 bg-red-500 text-white rounded-lg text-[11px]"
+              >
+                Stop
+              </button>
+            )}
+
+            <button
+              type="submit"
+              disabled={!input.trim()}
+              className="px-3 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 flex items-center space-x-1 text-xs"
+            >
+              <Send className="h-3 w-3" />
+              <span>Send</span>
+            </button>
+          </form>
         </section>
       </main>
     </div>
