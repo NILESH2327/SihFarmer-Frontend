@@ -1,6 +1,8 @@
 import React from 'react';
 import { Sprout, Mail, Phone, MapPin } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { Link } from "react-router-dom";
+
 
 const Footer = () => {
   const { t } = useLanguage();

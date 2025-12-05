@@ -7,6 +7,9 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from './pages/Dashboard';
 import Upload from './pages/Upload';
+import "leaflet/dist/leaflet.css";
+
+
 // import Chatbot from './pages/Chatbot';
 import Knowledge from "./pages/Knowledge";
 import ActivityPage from './pages/ActivityPage';

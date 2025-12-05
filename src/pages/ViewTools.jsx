@@ -12,6 +12,7 @@ import {
   UserRound,
   Sprout,
   PlusCircle,
+  FlaskConical
 } from "lucide-react";
 import { useLanguage } from "../contexts/LanguageContext";
 
@@ -101,6 +102,12 @@ const FEATURES = (t) => [
     title: "Add New Farm",
     text: "Register a new farm with location and details.",
   },
+  {
+  to: "/pestisides-scanner",
+  icon: <FlaskConical className="h-8 w-8 text-teal-200" />,
+  title: "Pesticide Restriction Checker",
+  text: "Check pesticide restrictions for crops.",
+},
 ];
 
 const ViewTools = () => {
