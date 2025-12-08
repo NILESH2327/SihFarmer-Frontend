@@ -12,6 +12,10 @@ export default function PesticideRestrictionChecker() {
 
   const suggestions = []; // You can add later
 
+
+    useEffect(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    }, []);
   // 👉 Load all pesticides from backend
   useEffect(() => {
     async function loadAll() {

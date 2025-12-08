@@ -4,6 +4,7 @@ import { useLanguage } from "../contexts/LanguageContext";
 import { jsPDF } from "jspdf";
 import { toast } from "react-toastify";
 
+
 /* ------------------- Axios Instance ------------------- */
 const API = axios.create({
   baseURL: "http://localhost:5000/api",
@@ -30,6 +31,8 @@ export default function FertilizerGuidance() {
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   }, []);
+
+  const {t} = useLanguage();
 
   const { language } = useLanguage();
   const lang = language === "ml" ? "ml" : "en";
