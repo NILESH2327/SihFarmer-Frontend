@@ -74,7 +74,7 @@ const Login = () => {
             <input
               type="tel"
               className="w-full px-3 py-2 rounded-lg border border-green-200 bg-green-50 focus:bg-white focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none text-sm"
-              placeholder="john@example.com"
+              placeholder="+ 98765 43210"
               value={phone}
               onChange={(e) => setphone(e.target.value)}
               required

@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { postJSON } from "../api";
 import { Sprout, CalendarDays, Leaf, LandPlot } from "lucide-react";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function AddCropForm() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     cropName: "",
     variety: "",
@@ -26,6 +29,9 @@ export default function AddCropForm() {
       const res = await postJSON("/farmer/add-crop", form);
       console.log(res);
       setMessage("🌾 Crop added successfully! Calendar generated.");
+      navigate("/farms");
+      toast.success("🌾 Crop added successfully! Calendar generated.");
+
     } catch (err) {
       console.error(err);
       setMessage("❌ Failed to add crop.");

@@ -42,12 +42,6 @@ const FEATURES = (t) => [
     textKey: "features.nearestMarketplace.text",
   },
   {
-    to: "/soil-scanner",
-    icon: <Microscope className="h-8 w-8 text-green-200" />,
-    titleKey: "features.soilScanner.title",
-    textKey: "features.soilScanner.text",
-  },
-  {
     to: "/fertilizer-guidance",
     icon: <Microscope className="h-8 w-8 text-emerald-200" />,
     titleKey: "features.fertilizerGuidance.title",
@@ -71,12 +65,12 @@ const FEATURES = (t) => [
     titleKey: "features.schemes.title",
     textKey: "features.schemes.text",
   },
-  {
-    to: "/knowledge-engine",
-    icon: <Sparkles className="h-8 w-8 text-emerald-300" />,
-    titleKey: "features.knowledgeEngine.title",
-    textKey: "features.knowledgeEngine.text",
-  },
+  // {
+  //   to: "/knowledge-engine",
+  //   icon: <Sparkles className="h-8 w-8 text-emerald-300" />,
+  //   titleKey: "features.knowledgeEngine.title",
+  //   textKey: "features.knowledgeEngine.text",
+  // },
   {
     to: "/market-place/create-requirement",
     icon: <ShoppingCart className="h-8 w-8 text-emerald-300" />,
@@ -93,21 +87,27 @@ const FEATURES = (t) => [
   {
     to: "/farms",
     icon: <MapPin className="h-8 w-8 text-blue-400" />,
-    title: "Show All Farms",
-    text: "View a list and map of all registered farms.",
+    titleKey: "features.showallfarms.title",
+    textKey: "features.showallfarms.text",
   },
   {
     to: "/farms/add",
     icon: <PlusCircle className="h-8 w-8 text-green-400" />,
-    title: "Add New Farm",
-    text: "Register a new farm with location and details.",
+    titleKey: "Add New Farm",
+    textKey: "Register a new farm with location and details.",
   },
   {
   to: "/pestisides-scanner",
   icon: <FlaskConical className="h-8 w-8 text-teal-200" />,
-  title: "Pesticide Restriction Checker",
-  text: "Check pesticide restrictions for crops.",
+  titleKey: "Pesticide Restriction Checker",
+  textKey: "Check pesticide restrictions for crops.",
 },
+{
+    to: "/soil-scanner",
+    icon: <Microscope className="h-8 w-8 text-green-200" />,
+    titleKey: "features.soilScanner.title",
+    textKey: "features.soilScanner.text",
+  },
 ];
 
 const ViewTools = () => {

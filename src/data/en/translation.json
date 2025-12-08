@@ -139,6 +139,9 @@
   "features.createBuySell.text": "Create listings and manage buy/sell orders.",
   "features.updateProfile.title": "Update Profile",
   "features.updateProfile.text": "Edit your farm, crop and contact details.",
+  "features.showallfarms.title": "Show All Farms",
+  "features.showallfarms.text": "View a list and map of all registered farms.",
+  "features.updateProfile.title": "Update Profile",
 
   "pleaseLoginFirst": "Please login first",
   "cropDetection.title": "Crop Disease Detection",

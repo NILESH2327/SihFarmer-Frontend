@@ -205,7 +205,7 @@ const fetchServices = async () => {
         </div>
 
         {/* Smart Suggestions */}
-        {filtered.length > 0 && (
+        {services.length > 0 && (
           <div className="bg-green-50 border border-green-200 p-4 rounded-xl mb-6">
             <h3 className="font-bold flex items-center gap-2 text-green-700 mb-2">
               <Sparkles /> Smart Suggestions
@@ -248,7 +248,7 @@ const fetchServices = async () => {
       />
 
       {/* Service Markers */}
-      {filtered.map((s, i) => (
+      {services.map((s, i) => (
         <Marker key={i} position={[s.lat, s.lng]}>
           <Popup>
             <b>{s.name}</b> <br />
